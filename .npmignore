@@ -1,0 +1,15 @@
+# Don't include source code or dev setup files
+src/
+node_modules/
+dist/*.map
+
+# Build & config files
+tsconfig.json
+tailwind.config.js
+*.config.js
+
+# Development / editor stuff
+.vscode/
+.git/
+*.log
+.DS_Store

@@ -1,0 +1,7 @@
+# node
+node_modules/
+.env
+.vscode/
+.DS_Store
+# do NOT include dist/
+# dist/
