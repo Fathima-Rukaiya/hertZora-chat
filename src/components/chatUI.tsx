@@ -19,8 +19,8 @@ export function ChatUI({ apiKey,
     const [botName, setBotName] = useState("ChatBot");
     const [botIcon, setBotIcon] = useState<string | null>(null);
 
-    //const API_BASE_URL = "https://hostie-dashboard.vercel.app/api/clientCustomerChatBox";
-    const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
+    const API_BASE_URL = "https://hostie-dashboard.vercel.app/api/clientCustomerChatBox";
+   // const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
     //https://app.hertzora.ai/hostie/overview
 
     useEffect(() => {
@@ -98,7 +98,7 @@ export function ChatUI({ apiKey,
                     ) : (
                         <Bot strokeWidth={1.75} size={22} />
                     )}
-                    <span className="font-semibold text-sm">Ask {botName}!</span>
+                    <span className="font-semibold text-sm">{botName}</span>
                 </button>
 
                 {isOpen && (
