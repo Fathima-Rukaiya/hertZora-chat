@@ -55,7 +55,7 @@ export function ChatUI({ apiKey,
         };
 
         verifyDomain();
-    }, [apiKey]);
+    }, []);
 
     if (isAllowed === null) return null;
 
