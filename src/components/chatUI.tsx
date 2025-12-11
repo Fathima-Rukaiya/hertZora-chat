@@ -19,10 +19,10 @@ export function ChatUI({ apiKey,
     const [botName, setBotName] = useState("ChatBot");
     const [botIcon, setBotIcon] = useState<string | null>(null);
 
-    // const API_BASE_URL = "https://hostie-dashboard.vercel.app/api/clientCustomerChatBox";
+    const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
    // const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
     //https://app.hertzora.ai/hostie/overview
-const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
+// const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
     useEffect(() => {
         const verifyDomain = async () => {
             try {

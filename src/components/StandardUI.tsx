@@ -228,11 +228,11 @@ export function StandardUI({
   }, []);
 
   //
-  //https://hostingate-client.vercel.app/sign-in
-  //  const API_BASE_URL = "https://hostie-dashboard.vercel.app/api/clientCustomerChatBox";
+  //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
+   const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
   //const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
 
-   const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
+  //  const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
@@ -1149,7 +1149,7 @@ export function StandardUI({
                               >
                                 <div className={`flex gap-2 
                                 ${msg.sender === "user"
-                                    ? "bg-pink-600 dark:bg-pink-700 text-white rounded-br-none relative"
+                                    ? "text-white rounded-br-none relative"
                                     : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
                                   }`}> <FileText size={20} />View Document</div>
 
