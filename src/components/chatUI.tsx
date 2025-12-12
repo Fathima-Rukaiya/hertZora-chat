@@ -155,14 +155,14 @@ export function ChatUI({ apiKey,
                     ) : (
                         <Bot strokeWidth={1.75} size={22} />
                     )}
-                    <span className="font-semibold text-sm">{botName}10</span>
+                    <span className="font-semibold text-sm">{botName}11</span>
                 </button>
 
                 {isOpen && (
                     // {botName}
                     <div
                         className="absolute bottom-full mb-3 right-0 w-80 p-0 shadow-2xl rounded-xl transition-all duration-200">
-                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} gradient={gradient} />
+                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} gradient={gradient}  darkGradient={darkModeGradient} />
                     </div>
                 )}
             </div>
