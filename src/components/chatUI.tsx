@@ -21,10 +21,10 @@ export function ChatUI({ apiKey,
     const [botColors, setBotColors] = useState<string[] | null>(null);
 
 
-    // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
+    const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
     // const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
     //https://app.hertzora.ai/hostie/overview
-    const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
+    // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
     useEffect(() => {
         const verifyDomain = async () => {
             try {
@@ -105,9 +105,9 @@ export function ChatUI({ apiKey,
     // slight darker tone for dark mode
     const darkModeGradient = botColors
         ? `linear-gradient(to right, 
-       ${darkenColor(botColors[0], 80)}, 
-       ${darkenColor(botColors[1], 80)}, 
-       ${darkenColor(botColors[2], 80)}
+       ${darkenColor(botColors[0], 40)}, 
+       ${darkenColor(botColors[1], 40)}, 
+       ${darkenColor(botColors[2], 40)}
      )`
         : gradient;
 
@@ -155,7 +155,7 @@ export function ChatUI({ apiKey,
                     ) : (
                         <Bot strokeWidth={1.75} size={22} />
                     )}
-                    <span className="font-semibold text-sm">{botName}20</span>
+                    <span className="font-semibold text-sm">{botName}25</span>
                 </button>
 
                 {isOpen && (
