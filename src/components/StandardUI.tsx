@@ -1270,7 +1270,7 @@ export function StandardUI({
 
             <style>{`
   .send-button {
-    background: linear-gradient(to right, #db2777, #db2777, #7e22ce) !important;
+   
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1287,7 +1287,7 @@ export function StandardUI({
   }
 `}</style>
             {/* #db2777 */}
-            <button onClick={sendMessage} className="send-button">
+            <button onClick={sendMessage} style={{ background: gradient }} className="send-button">
               <SendHorizontal />
             </button>
 
