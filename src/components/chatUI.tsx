@@ -18,6 +18,8 @@ export function ChatUI({ apiKey,
 
     const [botName, setBotName] = useState("ChatBot");
     const [botIcon, setBotIcon] = useState<string | null>(null);
+    const [botColors, setBotColors] = useState<string[] | null>(null);
+
 
     // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
    // const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
@@ -48,6 +50,8 @@ const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
                     setBotName(capitalizedName || "ChatBot");
                     setBotIcon(data.bot_icon || null);
                     console.log(data.bot_name)
+                    setBotColors(data.colors || null);
+
                 }
             } catch {
                 setIsAllowed(false);
@@ -60,12 +64,17 @@ const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
     if (isAllowed === null) return null;
 
     if (isAllowed === false)
+        
         return (
             <div className="fixed bottom-6 right-6 z-[9999] text-sm text-red-600 bg-white p-3 rounded-xl shadow">
                 <p className="text-gray-600 text-sm">This chat widget is not authorized for this domain.</p>
                 <p className="text-gray-400 text-xs mt-2">Please contact the admin.</p>
             </div>
         );
+
+         const gradient = botColors
+    ? `linear-gradient(to right, ${botColors[0]}, ${botColors[1]}, ${botColors[2]})`
+    : `linear-gradient(to right, #db2777, #A724A8, #7e22ce)`;
 
     return (
         // <ThemeProvider
@@ -79,16 +88,21 @@ const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
             <div ref={popoverRef} className="relative">
                 <style>{`
  
+ 
      .hertzora-color {
    color: "#fff" !important;
-   background: linear-gradient(to right, #db2777, #A724A8, #7e22ce) !important;
+ 
 }
 
 `}</style>
-
+{/*     .hertzora-color {
+   color: "#fff" !important;
+   background: linear-gradient(to right, #db2777, #A724A8, #7e22ce) !important;
+} */}
                 <button
                     id="hertzora-btn"
                     onClick={() => setIsOpen(!isOpen)}
+                     style={{ background: gradient }}
                     className="hertzora-color rounded-full shadow-xl flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-700 dark:from-purple-800 dark:to-pink-900 text-white hover:from-pink-700 hover:to-purple-800"
                 >
                     {/* <Bot strokeWidth={1.75} size={22} /> */}
@@ -98,7 +112,7 @@ const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
                     ) : (
                         <Bot strokeWidth={1.75} size={22} />
                     )}
-                    <span className="font-semibold text-sm">{botName}6</span>
+                    <span className="font-semibold text-sm">{botName}7</span>
                 </button>
 
                 {isOpen && (
