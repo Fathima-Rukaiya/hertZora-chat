@@ -96,9 +96,9 @@ export function ChatUI({ apiKey,
 
     const hoverGradient = botColors
         ? `linear-gradient(to right, 
-       ${darkenColor(botColors[0], 30)}, 
-       ${darkenColor(botColors[1], 30)}, 
-       ${darkenColor(botColors[2], 30)}
+       ${darkenColor(botColors[0], 90)}, 
+       ${darkenColor(botColors[1], 90)}, 
+       ${darkenColor(botColors[2], 90)}
      )`
         : `linear-gradient(to right, #be1f66, #8b1d8b, #6b1cae)`;
 
@@ -155,7 +155,7 @@ export function ChatUI({ apiKey,
                     ) : (
                         <Bot strokeWidth={1.75} size={22} />
                     )}
-                    <span className="font-semibold text-sm">{botName}11</span>
+                    <span className="font-semibold text-sm">{botName}17</span>
                 </button>
 
                 {isOpen && (
