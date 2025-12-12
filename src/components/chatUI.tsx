@@ -119,7 +119,7 @@ const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
                     // {botName}
                     <div
                         className="absolute bottom-full mb-3 right-0 w-80 p-0 shadow-2xl rounded-xl transition-all duration-200">
-                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} />
+                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName}  gradient={gradient}/>
                     </div>
                 )}
             </div>

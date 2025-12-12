@@ -21,12 +21,14 @@ export function StandardUI({
   apiKey,
   shadowContainer,
   botIcon,
-  botName
+  botName,
+  gradient
 }: {
   apiKey: string;
   shadowContainer?: React.RefObject<HTMLDivElement | null>;
   botIcon: string,
   botName: string
+  gradient?: string;
 }) {
 
 
@@ -232,7 +234,7 @@ export function StandardUI({
   //  const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
   //const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
 
-   const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
+  const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
@@ -878,7 +880,7 @@ export function StandardUI({
 }
      .hertzora-color {
    color: "#fff" !important;
-   background: linear-gradient(to right, #db2777, #A724A8, #7e22ce) !important;
+   
 
 `}</style>
 
@@ -927,7 +929,8 @@ export function StandardUI({
             <div className="flex items-center gap-1">
               {/* <BotMessageSquare className="mr-1.5" />*/}
               {botIcon ? (
-                <div className="hertzora-color bg-gradient-to-r from-pink-600 to-purple-700 dark:from-purple-800 dark:to-pink-900 text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
+                <div
+                  style={{ background: gradient }} className="hertzora-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
                   <img
                     src={botIcon}
                     alt="Bot"
@@ -986,7 +989,7 @@ export function StandardUI({
 
                   )}</div>
               )}
-              <div className="hertzora-color flex items-center px-2 py-0.5 rounded-md gap-1 bg-gradient-to-r from-pink-600 to-purple-700 dark:from-purple-800 dark:to-pink-900">
+              <div style={{ background: gradient }} className="hertzora-color flex items-center px-2 py-0.5 rounded-md gap-1 ">
                 <Sparkles size="12" className="text-zinc-600 dark:text-zinc-200" />
                 {/* <img
                   src={botIcon}
@@ -1034,7 +1037,8 @@ export function StandardUI({
                 <img
                   src={botIcon}
                   alt="Bot Icon"
-                  className="hertzora-color w-14 h-14 rounded-full object-cover mb-2 p-3 bg-gradient-to-r from-pink-600 to-purple-700 dark:from-purple-800 dark:to-pink-900 text-white"
+                  style={{ background: gradient }}
+                  className="hertzora-color w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
                 <div className="flex items-center text-lg justify-center font-bold text-pink-600 dark:text-pink-500">
                   Hello,&nbsp;<div>there..!</div>
@@ -1067,7 +1071,8 @@ export function StandardUI({
                     <img
                       src={botIcon}
                       alt="Bot"
-                      className="hertzora-color h-[31px] w-[31px] rounded-full object-cover p-1 border border-pink-600 dark:border-neutral-500 bg-gradient-to-r from-pink-600 to-purple-700 dark:from-purple-800 dark:to-pink-900 text-white"
+                      style={{ background: gradient }}
+                      className="hertzora-color h-[31px] w-[31px] rounded-full object-cover p-1 border border-pink-600 dark:border-neutral-500 text-white"
                     />
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
                   </div>
@@ -1102,9 +1107,14 @@ export function StandardUI({
                 </style>
                 <div
                   className={` chat-bubble px-2 py-1.5 rounded-xl max-w-[75%] text-sm shadow-sm break-words  ${msg.sender === "user"
-                    ? "hertzora-color bg-gradient-to-r from-pink-600 to-purple-700 dark:from-purple-800 dark:to-pink-900 text-white text-white rounded-br-none relative"
+                    ? "hertzora-color text-white text-white rounded-br-none relative"
                     : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
                     }`}
+                  style={
+                    msg.sender === "user"
+                      ? { background: gradient }
+                      : {}
+                  }
                 >
                   {msg.isTyping ? (
                     <div className="flex gap-1 px-1.5">
@@ -1203,7 +1213,7 @@ export function StandardUI({
                         width={30}
                         className="rounded-full object-cover h-[30px] w-[30px]"
                       /> */}
-                    <div className="hertzora-color bg-gradient-to-r from-pink-600 to-purple-700 dark:from-purple-800 dark:to-pink-900 relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
+                    <div style={{ background: gradient }} className="hertzora-color  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
                       <UserRound size="18" className="uIcon text-gray-200" />
                     </div>
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
