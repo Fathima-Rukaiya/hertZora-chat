@@ -151,6 +151,10 @@ export function StandardUI({
     setIsGuest(true);
     setUserInfo(null);
     setAskedForInfo(false);
+    // reset AI pause state
+    setAiPaused(false);
+    sessionStorage.removeItem("aiPaused");
+
 
     // create new room id
     const newRoom = crypto.randomUUID();
@@ -800,6 +804,13 @@ export function StandardUI({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const getInitials = (name: string) => {
+    if (!name) return "";
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  };
+
 
   if (!showChat) return null;
 
@@ -945,51 +956,34 @@ export function StandardUI({
           className="flex flex-col w-[340px] h-[85vh] rounded-2xl shadow-xl border border-zinc-100 dark:border-neutral-800  overflow-hidden  transition-colors duration-300 bg-white dark:bg-neutral-900"
         >
           {/* Header */}
-          {/* <div className="flex items-center justify-between p-3 border-b border-zinc-200 dark:border-neutral-700 ">
-          <div className="flex items-center gap-2">
-            <Bot strokeWidth={1.75} className="text-pink-600" />
-            <span className="font-semibold text-sm">Hostie</span>
-            <span className="ml-1 h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-xs text-green-500">Online</span>
-          </div>
-          <div className="flex items-center px-2 py-0.5 rounded-md bg-pink-50 dark:bg-pink-800">
-            <Bot size={12} className="text-zinc-600 dark:text-zinc-200" />
-            <span className="ml-1 text-xs font-medium">AI</span>
-          </div>
-          <div className="flex items-center px-2 py-0.5 rounded-md">
 
-            <span className=" text-xs font-medium"><button
-              onClick={() => setShowChat(false)}
-              className="text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-white"
-            >
-              ✕
-            </button>
-            </span>
-          </div>
-        </div> */}
 
           <div className="flex items-center justify-between p-3 text-sm font-semibold">
             <div className="flex items-center gap-1">
               {/* <BotMessageSquare className="mr-1.5" />*/}
 
- 
-{
 
-
-              botIcon ? (
-                <div
-                  className="hertzora-background hertzora-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
-                  <img
-                    src={botIcon}
-                    alt="Bot"
-                    className="rounded-full object-cover"
-                  /></div>
-              ) : (
-                <div className="bg-pink-600 p-[6px] w-5 h-5 rounded-full flex items-center justify-center">
-                  <BotMessageSquare size={20} />
+              {assignedAgent ? (
+                <div className="h-6 w-6 rounded-full bg-pink-600 text-white flex items-center justify-center text-xs font-semibold">
+                  {getInitials(assignedAgent.name)}
                 </div>
-              )}
-               {assignedAgent ? assignedAgent.name : botName}
+              ) :
+
+
+                botIcon ? (
+                  <div
+                    className="hertzora-background hertzora-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
+                    <img
+                      src={botIcon}
+                      alt="Bot"
+                      className="rounded-full object-cover"
+                    /></div>
+                ) : (
+                  <div className="bg-pink-600 p-[6px] w-5 h-5 rounded-full flex items-center justify-center">
+                    <BotMessageSquare size={20} />
+                  </div>
+                )}
+              {assignedAgent ? assignedAgent.name : botName}
 
               <span
                 className="ml-2 h-2 w-2 rounded-full bg-green-500"
