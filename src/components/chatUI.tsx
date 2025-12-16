@@ -111,6 +111,10 @@ export function ChatUI({ apiKey,
      )`
         : gradient;
 
+    const borderColor = botColors ? darkenColor(botColors[0], 20) : "#e9e4e6ff";
+const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
+
+
 
     return (
         // <ThemeProvider
@@ -155,14 +159,14 @@ export function ChatUI({ apiKey,
                     ) : (
                         <Bot strokeWidth={1.75} size={22} />
                     )}
-                    <span className="font-semibold text-sm">{botName}29</span>
+                    <span className="font-semibold text-sm">{botName}30</span>
                 </button>
 
                 {isOpen && (
                     // {botName}
                     <div
                         className="absolute bottom-full mb-3 right-0 w-80 p-0 shadow-2xl rounded-xl transition-all duration-200">
-                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} gradient={gradient}  darkGradient={darkModeGradient} />
+                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} gradient={gradient} darkGradient={darkModeGradient} borderColor={borderColor}  darkBorderColor={darkBorderColor} />
                     </div>
                 )}
             </div>

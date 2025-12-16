@@ -23,7 +23,9 @@ export function StandardUI({
   botIcon,
   botName,
   gradient,
-  darkGradient
+  darkGradient,
+   borderColor,
+   darkBorderColor,
 }: {
   apiKey: string;
   shadowContainer?: React.RefObject<HTMLDivElement | null>;
@@ -31,6 +33,8 @@ export function StandardUI({
   botName: string
   gradient?: string;
   darkGradient?: string;
+   borderColor?: string;
+   darkBorderColor?: string;
 }) {
 
 
@@ -932,9 +936,12 @@ export function StandardUI({
       <style>{`
   .hertzora-background {
     background: ${gradient};
+    border: 2px solid ${borderColor || "#e9e4e6ff"};
+    transition: border-color 0.3s;
   }
   .dark .hertzora-background {
     background: ${darkGradient};
+    border-color: ${darkBorderColor || "#50484cff"};
   }
 `}</style>
 
@@ -964,7 +971,7 @@ export function StandardUI({
 
 
               {assignedAgent ? (
-                <div className="h-6 w-6 rounded-full bg-pink-600 text-white flex items-center justify-center text-xs font-semibold">
+                <div className="h-6 w-6 rounded-full hertzora-background hertzora-color text-white flex items-center justify-center text-xs font-semibold">
                   {getInitials(assignedAgent.name)}
                 </div>
               ) :
