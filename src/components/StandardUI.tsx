@@ -68,6 +68,13 @@ export function StandardUI({
   const [reviewText, setReviewText] = useState("");
   const [showReviewPopup, setShowReviewPopup] = useState(false);
 
+  //to get assgnee data 
+  const [assignedAgent, setAssignedAgent] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+
   useEffect(() => {
     if (chatHistory.length > 0) { // Start AFTER first message
       resetInactivityTimer();
@@ -233,10 +240,10 @@ export function StandardUI({
 
   //
   //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
-   const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
+  // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
   //const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
 
-  // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
+  const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
@@ -346,6 +353,17 @@ export function StandardUI({
         if (msgText === "You are now connected to a live agent. AI responses are paused.") {
           setAiPaused(true);
           addBotMessage(msgText);
+
+          getAssignee()
+            .then((agent) => {
+              if (agent?.id && agent?.name) {
+                setAssignedAgent({
+                  id: agent.id,
+                  name: agent.name,
+                });
+              }
+            })
+            .catch(() => { });
           return; // admin message already sent, don’t add again
         }
 
@@ -353,6 +371,7 @@ export function StandardUI({
         if (msgText === "AI responses resumed.") {
           setAiPaused(false);
           addBotMessage(msgText);
+          setAssignedAgent(null);
           return;
         }
 
@@ -400,7 +419,21 @@ export function StandardUI({
   }, [roomName]);
 
 
-
+  //save normal msg 
+  const getAssignee = async () => {
+    const res = await fetch(`${API_BASE_URL}/getAssignee`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        room_id: roomName,
+        sender_id: senderId,
+      }),
+    });
+    return res.json(); // { reply: "AI response" }
+  };
 
 
   const saveGuestContact = async (guestData: { name?: string; email?: string, room_id: string, country: string, }) => {
@@ -885,7 +918,7 @@ export function StandardUI({
    
 
 `}</style>
-<style>{`
+      <style>{`
   .hertzora-background {
     background: ${gradient};
   }
@@ -938,9 +971,14 @@ export function StandardUI({
           <div className="flex items-center justify-between p-3 text-sm font-semibold">
             <div className="flex items-center gap-1">
               {/* <BotMessageSquare className="mr-1.5" />*/}
-              {botIcon ? (
+
+ 
+{
+
+
+              botIcon ? (
                 <div
-                 className="hertzora-background hertzora-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
+                  className="hertzora-background hertzora-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
                   <img
                     src={botIcon}
                     alt="Bot"
@@ -950,7 +988,8 @@ export function StandardUI({
                 <div className="bg-pink-600 p-[6px] w-5 h-5 rounded-full flex items-center justify-center">
                   <BotMessageSquare size={20} />
                 </div>
-              )} {botName}
+              )}
+               {assignedAgent ? assignedAgent.name : botName}
 
               <span
                 className="ml-2 h-2 w-2 rounded-full bg-green-500"
@@ -1047,7 +1086,7 @@ export function StandardUI({
                 <img
                   src={botIcon}
                   alt="Bot Icon"
-                  
+
                   className="hertzora-color hertzora-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
                 <div className="flex items-center text-lg justify-center font-bold text-pink-600 dark:text-pink-500">
@@ -1081,7 +1120,7 @@ export function StandardUI({
                     <img
                       src={botIcon}
                       alt="Bot"
-                      
+
                       className="hertzora-color hertzora-background h-[31px] w-[31px] rounded-full object-cover p-1 border border-pink-600 dark:border-neutral-500 text-white"
                     />
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
@@ -1120,7 +1159,7 @@ export function StandardUI({
                     ? "hertzora-color hertzora-background text-white text-white rounded-br-none relative"
                     : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
                     }`}
-                 
+
                 >
                   {msg.isTyping ? (
                     <div className="flex gap-1 px-1.5">
@@ -1219,7 +1258,7 @@ export function StandardUI({
                         width={30}
                         className="rounded-full object-cover h-[30px] w-[30px]"
                       /> */}
-                    <div  className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
+                    <div className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
                       <UserRound size="18" className="uIcon text-gray-200" />
                     </div>
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
