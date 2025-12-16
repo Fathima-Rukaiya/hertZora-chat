@@ -248,10 +248,10 @@ export function StandardUI({
 
   //
   //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
-  // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
+  const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
   //const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
 
-  const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
+  // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
@@ -936,7 +936,7 @@ export function StandardUI({
       <style>{`
   .hertzora-background {
     background: ${gradient};
-    border: 2px solid ${borderColor || "#e9e4e6ff"};
+    border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.3s;
   }
   .dark .hertzora-background {
