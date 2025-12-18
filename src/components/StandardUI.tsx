@@ -1134,7 +1134,7 @@ export function StandardUI({
                       src={botIcon}
                       alt="Bot"
 
-                      className="hertzora-color hertzora-background h-[31px] w-[31px] rounded-full object-cover p-1 border border-pink-600 dark:border-neutral-500 text-white"
+                      className="hertzora-color hertzora-background h-[31px] w-[31px] rounded-full object-cover p-1 text-white"
                     />
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
                   </div>
@@ -1316,7 +1316,17 @@ export function StandardUI({
               }}
               onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
               placeholder="Ask your question"
-              className="flex-1 outline-none border border-zinc-200 dark:border-neutral-700 rounded-full px-3 py-2 text-sm focus:ring-1 focus:ring-pink-600 text-zinc-500 dark:text-zinc-400 dark:bg-neutral-900"
+              className="flex-1 outline-none border border-zinc-200 dark:border-neutral-700 rounded-full px-3 py-2 text-sm text-zinc-500 dark:text-zinc-400 dark:bg-neutral-900"
+
+     onFocus={(e) => {
+    e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
+    if (document.body.classList.contains("dark")) {
+      e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
+    }
+  }}
+  onBlur={(e) => {
+    e.currentTarget.style.borderColor = ""; // reset to Tailwind default
+  }}
             />
             {/* <button
               onClick={sendMessage}
