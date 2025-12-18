@@ -945,7 +945,7 @@ export function StandardUI({
   }
 
    .hertzora-hello-text {
-    background: ${borderColor};
+    color: ${borderColor};
     transition: border-color 0.3s;
   }
   .dark .hertzora-hello-text {
