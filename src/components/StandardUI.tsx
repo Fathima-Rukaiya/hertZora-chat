@@ -1030,7 +1030,7 @@ export function StandardUI({
                 <div className="relative">
                   <button
                     onClick={() => setShowPremiumPopup((prev) => !prev)}
-                    className="flex items-center px-2 py-0.5 rounded-md gap-1 bg-purple-50  border border-zinc-200 dark:border-neutral-800 dark:bg-neutral-700">
+                    className="flex items-center px-2 py-0.5 rounded-md gap-1 bg-purple-50   dark:bg-neutral-700">
                     <LockIcon
                       size="12"
                       className="text-zinc-600 dark:text-zinc-200"
