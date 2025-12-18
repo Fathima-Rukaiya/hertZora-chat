@@ -159,7 +159,7 @@ const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
                     ) : (
                         <Bot strokeWidth={1.75} size={22} />
                     )}
-                    <span className="font-semibold text-sm">{botName}9</span>
+                    <span className="font-semibold text-sm">{botName}10</span>
                 </button>
 
                 {isOpen && (

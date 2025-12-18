@@ -24,8 +24,8 @@ export function StandardUI({
   botName,
   gradient,
   darkGradient,
-   borderColor,
-   darkBorderColor,
+  borderColor,
+  darkBorderColor,
 }: {
   apiKey: string;
   shadowContainer?: React.RefObject<HTMLDivElement | null>;
@@ -33,8 +33,8 @@ export function StandardUI({
   botName: string
   gradient?: string;
   darkGradient?: string;
-   borderColor?: string;
-   darkBorderColor?: string;
+  borderColor?: string;
+  darkBorderColor?: string;
 }) {
 
 
@@ -946,10 +946,13 @@ export function StandardUI({
 
    .hertzora-hello-text {
     color: ${borderColor};
+    opacity: 0.85;
     transition: border-color 0.3s;
+
   }
   .dark .hertzora-hello-text {
-    color: ${darkBorderColor};
+    color: ${borderColor};
+    opacity: 1;
     
   }
 `}</style>
@@ -1027,7 +1030,7 @@ export function StandardUI({
                 <div className="relative">
                   <button
                     onClick={() => setShowPremiumPopup((prev) => !prev)}
-                    className="flex items-center px-2 py-0.5 rounded-md gap-1 bg-purple-50 dark:bg-purple-800">
+                    className="flex items-center px-2 py-0.5 rounded-md gap-1 bg-purple-50  border border-zinc-200 dark:border-neutral-800 dark:bg-neutral-700">
                     <LockIcon
                       size="12"
                       className="text-zinc-600 dark:text-zinc-200"
@@ -1099,7 +1102,7 @@ export function StandardUI({
 
                   className="hertzora-color hertzora-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
-                <div  className="flex items-center text-lg justify-center font-bold hertzora-hello-text">
+                <div className="flex items-center text-lg justify-center font-bold hertzora-hello-text">
                   Hello,&nbsp;<div>there..!</div>
                   <div className="ml-1 text-[22px]">👋</div>
                 </div>
