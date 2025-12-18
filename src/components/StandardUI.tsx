@@ -1090,7 +1090,7 @@ export function StandardUI({
 
                   className="hertzora-color hertzora-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
-                <div className="flex items-center text-lg justify-center font-bold text-pink-600 dark:text-pink-500">
+                <div style={{ color: gradient }} className="flex items-center text-lg justify-center font-bold">
                   Hello,&nbsp;<div>there..!</div>
                   <div className="ml-1 text-[22px]">👋</div>
                 </div>
@@ -1333,7 +1333,7 @@ export function StandardUI({
   }
 `}</style>
             {/* #db2777 */}
-            <button onClick={sendMessage} style={{ background: gradient }} className="send-button">
+            <button onClick={sendMessage} style={{ background: gradient }} className="send-button hertzora-background">
               <SendHorizontal />
             </button>
 
