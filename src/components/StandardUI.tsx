@@ -513,7 +513,7 @@ export function StandardUI({
       body: JSON.stringify({ room_id: roomName, message: text, receiver_id: receiverId }),
     });
   };
-  //C:\Users\User\Desktop\amez\hostie-dashboard\src\app\api\clientCustomerChatBox\aiResponceGenerate
+  //C:\Users\User\Desktop\amez\hertzora-dashboard\src\app\api\clientCustomerChatBox\aiResponceGenerate
   const generateAIResponse = async (room_id: string, message: string, sender_id: string) => {
     const typingMessage: ChatMessage = { sender: "bot", text: "", isTyping: true };
     setChatHistory(prev => [...prev, typingMessage]);
@@ -658,8 +658,8 @@ export function StandardUI({
       const file = e.detail as File;
       handleFileUpload(file);
     };
-    window.addEventListener("hostie-file-selected", handleFile);
-    return () => window.removeEventListener("hostie-file-selected", handleFile);
+    window.addEventListener("hertzora-file-selected", handleFile);
+    return () => window.removeEventListener("hertzora-file-selected", handleFile);
   }, [roomName, senderId]);
 
 
@@ -739,7 +739,7 @@ export function StandardUI({
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const shadowRoot = document.querySelector("#hostie-chat-root")?.shadowRoot;
+  const shadowRoot = document.querySelector("#hertzora-chat-root")?.shadowRoot;
 
   const handleReviewSubmit = async () => {
 
@@ -916,7 +916,7 @@ export function StandardUI({
 
       <style>{`
   @media (max-width: 480px) {
-   #hostie-chat-box {
+   #hertzora-chat-box {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -971,7 +971,7 @@ export function StandardUI({
       <div className="fixed bottom-6 right-6 z-50" >
         {/* <div className="fixed bottom-6 right-6 z-50 " > */}
         <div
-          id="hostie-chat-box"
+          id="hertzora-chat-box"
           className="flex flex-col w-[340px] h-[85vh] rounded-2xl shadow-xl border border-zinc-100 dark:border-neutral-800  overflow-hidden  transition-colors duration-300 bg-white dark:bg-neutral-900"
         >
           {/* Header */}
@@ -1318,15 +1318,15 @@ export function StandardUI({
               placeholder="Ask your question"
               className="flex-1 outline-none border border-zinc-200 dark:border-neutral-700 rounded-full px-3 py-2 text-sm text-zinc-500 dark:text-zinc-400 dark:bg-neutral-900"
 
-     onFocus={(e) => {
-    e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
-    if (document.body.classList.contains("dark")) {
-      e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
-    }
-  }}
-  onBlur={(e) => {
-    e.currentTarget.style.borderColor = ""; // reset to Tailwind default
-  }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
+                if (document.body.classList.contains("dark")) {
+                  e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
+                }
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = ""; // reset to Tailwind default
+              }}
             />
             {/* <button
               onClick={sendMessage}
@@ -1374,7 +1374,7 @@ export function StandardUI({
               {/* Trigger */}
               <div className="flex items-center gap-1 hover:text-black dark:hover:text-white cursor-pointer">
                 {/* <div className="text-sm font-bold bg-gradient-to-r from-pink-600 via-pink-400 to-blue-600 bg-clip-text text-transparent">
-                  &nbsp;Hostie
+                  &nbsp;hertzora
                 </div> */}
 
                 {/* Inline CSS for this page only */}

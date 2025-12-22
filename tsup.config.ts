@@ -21,7 +21,7 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: ["src/index.tsx"],
   format: ["iife"],            // browser-ready <script>
-  globalName: "HostieChat",    // exposed as window.HostieChat
+  globalName: "HertzoraChat",    // exposed as window.HostieChat
   outDir: "dist",
   bundle: true,
   minify: true,

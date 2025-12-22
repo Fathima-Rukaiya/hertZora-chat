@@ -73,12 +73,12 @@
 
 import { mountWidget } from "./widget";
 
-interface HostieChatInit {
+interface HertzoraChatInit {
   apiKey: string;
   containerId?: string;
 }
 
-export function init(opts: HostieChatInit) {
+export function init(opts: HertzoraChatInit) {
   mountWidget(opts);
 }
 
@@ -87,12 +87,12 @@ if (typeof window !== "undefined") {
 
   if (script) {
     const apiKey = script.getAttribute("data-api-key");
-    const containerId = script.getAttribute("data-id") || "hostie-chat-root";
+    const containerId = script.getAttribute("data-id") || "Hertzora-chat-root";
 
     if (apiKey) {
       mountWidget({ apiKey, containerId });
     }
   }
 
-  (window as any).HostieChat = { init };
+  (window as any).HertzoraChat = { init };
 }

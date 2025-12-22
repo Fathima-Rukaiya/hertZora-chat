@@ -1,5 +1,5 @@
 {
-  "name": "hostie-chat-new",
+  "name": "hertzora-chat-new",
   "version": "1.0.0",
   "description": "Smart AI chat widget for embedding GPT-powered chatbots on any website",
   "main": "dist/index.js",
