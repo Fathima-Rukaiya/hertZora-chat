@@ -108,6 +108,8 @@ export function StandardUI({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const defaultSuggestions = suggestedQuestionList
+  const [showSuggestedOnce, setShowSuggestedOnce] = useState(false);
+
 
 
   useEffect(() => {
@@ -266,7 +268,7 @@ export function StandardUI({
   //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
   const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
   //const API_BASE_URL = "https://app.hostie.ai/api/clientCustomerChatBox";
-// https://app.hertzora.ai/hostie/overview
+  // https://app.hertzora.ai/hostie/overview
   // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";  
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -631,14 +633,11 @@ export function StandardUI({
           const thankMsg = `Thanks ${savedGuest.name || savedGuest.email}! You can continue chatting now..!`;
           // addBotMessage(thankMsg);
           await saveBotMessage(thankMsg, savedGuest.id, apiKey);
-          setIsProcessing(false);
-          if (defaultSuggestions) {
-
-
+          // ✅ SHOW SUGGESTIONS ONCE
+          if (!showSuggestedOnce && defaultSuggestions?.length) {
             setSuggestedQuestions(defaultSuggestions);
-            setShowSuggestions(true);
+            setShowSuggestedOnce(true);
           }
-
         } catch (err) {
           console.error("Error saving guest info:", err);
         }
@@ -678,6 +677,8 @@ export function StandardUI({
     }
 
   };
+
+
 
   useEffect(() => {
     const handleFile = (e: any) => {
@@ -979,6 +980,7 @@ export function StandardUI({
 
   const handleSuggestionClick = async (question: string) => {
     setShowSuggestions(false);
+    setShowSuggestedOnce(false);
     // setMessage(question);
 
     // trigger normal send logic
@@ -1598,15 +1600,16 @@ export function StandardUI({
             ))}
 
             <div ref={chatEndRef} />
-            {message === "" && roomName && senderId && !isProcessing && suggestedQuestionList && suggestedQuestionList?.length > 0 &&
-              <div className="">
-                {/* items-center justify-center */}
-                {/* mt-6 flex flex-col items-end justify-end */}
-                {/* <SuggestedQuestions questions={["How do I upgrade?", "What are your plans?", "Contact support"]} /> */}
-                <SuggestedQuestions questions={suggestedQuestionList} onSelect={handleSuggestionClick} />
-              </div>
+            {showSuggestedOnce &&
+              suggestedQuestionList &&
+              suggestedQuestionList.length > 0 && (
+                <SuggestedQuestions
+                  questions={suggestedQuestionList}
+                  onSelect={handleSuggestionClick}
+                />
+              )}
 
-            }
+
           </div>
 
           {/* Input */}

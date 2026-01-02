@@ -32,6 +32,7 @@ export function ChatUI({ apiKey,
     const [welcomeMsg, SetWelcomeMsg] = useState<string>("");
 
     const [suggestedQuestions, setSuggestedQuestions] = useState<string[] | null>(null);
+   
     const [errorMessage, setErrorMessage] = useState("");
     const [customWidgetIcon, setCustomWidgetIcon] = useState<string | null>(null);
     const [buttonSize, setButtonSize] = useState<string | null>(null);
@@ -234,7 +235,7 @@ const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
                     ) : (
                         <Bot strokeWidth={1.75} size={22} />
                     )}
-                    <span className="font-semibold text-sm">{botName}!
+                    <span className="font-semibold text-sm">Ask {botName}!
                         
                     </span>
                 </button>
