@@ -74,9 +74,9 @@ export function ChatUI({ apiKey,
                     console.log(data.bot_name)
                     setBotColors(data.colors || null);
 
-                     setGreeting(data.greeting || "Hello 👋");
+                     setGreeting(data.greeting || "Hello,  there..! 👋");
                     setIntroduction(data.introduction || "How can I help you today?");
-                    setStartButtonText(data.start_button_text || "Start Chat");
+                    setStartButtonText(data.start_button_text || "Start a conversation...");
                     setBackgroundColor(data.backgroundColor || "#ffffff")
                     //  setChatTriggerType(data.chat_trigger || "bubble");
 
