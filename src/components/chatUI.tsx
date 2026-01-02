@@ -19,6 +19,22 @@ export function ChatUI({ apiKey,
     const [botName, setBotName] = useState("ChatBot");
     const [botIcon, setBotIcon] = useState<string | null>(null);
     const [botColors, setBotColors] = useState<string[] | null>(null);
+ const [greeting, setGreeting] = useState<string>("");
+    const [introduction, setIntroduction] = useState<string>("");
+    const [startButtonText, setStartButtonText] = useState<string>("Start Chat");
+    const [backgroundColor, setBackgroundColor] = useState<string>("#ffffffff");
+
+
+    const [buttonPosition, setButtonPosition] = useState<"left" | "right">("right");
+    const [allowFileUpload, setAllowFileUpload] = useState(true);
+    const [linkBehavior, setLinkBehavior] = useState<"newTab" | "sameTab">("newTab");
+
+    const [welcomeMsg, SetWelcomeMsg] = useState<string>("");
+
+    const [suggestedQuestions, setSuggestedQuestions] = useState<string[] | null>(null);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [customWidgetIcon, setCustomWidgetIcon] = useState<string | null>(null);
+    const [buttonSize, setButtonSize] = useState<string | null>(null);
 
 
     // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
@@ -40,6 +56,11 @@ export function ChatUI({ apiKey,
                 if (!res.ok) return setIsAllowed(false);
 
                 const data = await res.json();
+                  if (!res.ok || !data.allowed) {
+                    setIsAllowed(false);
+                    setErrorMessage(data.reason || "This chat widget is not authorized.");
+                    return;
+                }
                 setIsAllowed(data.allowed ?? false);
 
                 if (data.allowed) {
@@ -51,6 +72,21 @@ export function ChatUI({ apiKey,
                     setBotIcon(data.bot_icon || null);
                     console.log(data.bot_name)
                     setBotColors(data.colors || null);
+
+                     setGreeting(data.greeting || "Hello 👋");
+                    setIntroduction(data.introduction || "How can I help you today?");
+                    setStartButtonText(data.start_button_text || "Start Chat");
+                    setBackgroundColor(data.backgroundColor || "#ffffff")
+                    //  setChatTriggerType(data.chat_trigger || "bubble");
+
+                    setButtonPosition(data.buttonPosition || "rigth");
+                    setAllowFileUpload(data.allowFileUpload ?? true);
+                    setLinkBehavior(data.linkBehavior || "newTab");
+                    SetWelcomeMsg(data.welcomeMessage);
+                    setSuggestedQuestions(data.suggestedQuestions || null);
+                    setCustomWidgetIcon(data.customWidgetIcon || null);
+                    setButtonSize(data.buttonSize || null);
+
 
                 }
             } catch {
@@ -85,7 +121,7 @@ export function ChatUI({ apiKey,
 
         return (
             <div className="fixed bottom-6 right-6 z-[9999] text-sm text-red-600 bg-white p-3 rounded-xl shadow">
-                <p className="text-gray-600 text-sm">This chat widget is not authorized for this domain.</p>
+                <p className="text-gray-600 text-sm">{errorMessage}</p>
                 <p className="text-gray-400 text-xs mt-2">Please contact the admin.</p>
             </div>
         );
@@ -122,7 +158,8 @@ const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
         //     defaultTheme="system"
         //     enableSystem
         // >
-        <div className="fixed bottom-6 right-6 z-[9999]">
+       <div
+            className={`fixed bottom-6 z-[9999] ${buttonPosition === "left" ? "left-6" : "right-6"}`}>
             {/* <div ref={popoverRef}> */}
             {/* , */}
             <div ref={popoverRef} className="relative">
@@ -144,6 +181,44 @@ const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
    color: "#fff" !important;
    background: linear-gradient(to right, #db2777, #A724A8, #7e22ce) !important;
 } */}
+  {customWidgetIcon ? (
+                    // Custom Widget Button
+                    <button
+                        id="custom-widget-btn"
+                        onClick={() => setIsOpen(!isOpen)}
+                        style={{
+                            backgroundColor: backgroundColor || "#ffffff",
+                            width: buttonSize || "60px",
+                            height: buttonSize || "60px",
+                            boxShadow: "0 4px 15px rgba(0,0,0,0.25)",
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transition: "all 0.3s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = "scale(1.05)";
+                            e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.35)";
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = "scale(1)";
+                            e.currentTarget.style.boxShadow = "0 4px 15px rgba(0,0,0,0.25)";
+                        }}
+                    >
+                        <img
+                            src={customWidgetIcon}
+                            alt="Chat Widget"
+                            style={{
+                                width: "80%", // adjust size inside button
+                                height: "80%",
+                                objectFit: "cover",
+                                borderRadius: "50%", // THIS makes the image circular
+                            }}
+
+                        />
+                    </button>
+                ) : (
                 <button
                     id="hertzora-btn"
                     onClick={() => setIsOpen(!isOpen)}
@@ -163,12 +238,24 @@ const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
                         
                     </span>
                 </button>
-
+                )}
                 {isOpen && (
                     // {botName}
-                    <div
-                        className="absolute bottom-full mb-3 right-0 w-80 p-0 shadow-2xl rounded-xl transition-all duration-200">
-                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} gradient={gradient} darkGradient={darkModeGradient} borderColor={borderColor}  darkBorderColor={darkBorderColor} />
+                   <div
+                        className={`absolute bottom-full mb-3  w-80 p-0 shadow-2xl rounded-xl transition-all duration-200
+                            ${buttonPosition === "left" ? "left-0" : "right-0"
+                            }`}>
+                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} gradient={gradient} darkGradient={darkModeGradient} borderColor={borderColor}  darkBorderColor={darkBorderColor}
+                          greeting={greeting}
+                            introduction={introduction}
+                            startButtonText={startButtonText}
+                            backgroundColor={backgroundColor}
+                            allowFileUpload={allowFileUpload}
+                            linkBehavior={linkBehavior}
+                            position={buttonPosition}
+                            welcomeMsg={welcomeMsg}
+                            suggestedQuestionList={suggestedQuestions || undefined}
+                         />
                     </div>
                 )}
             </div>

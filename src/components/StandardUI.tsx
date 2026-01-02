@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Bot, BotMessageSquare, FileText, Frown, Laugh, LockIcon, Meh, Plus, SendHorizontal, Sparkles, UserRound } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import Markdown from "markdown-to-jsx";
 
 type ChatMessage = {
   sender: "user" | "bot";
@@ -26,6 +27,15 @@ export function StandardUI({
   darkGradient,
   borderColor,
   darkBorderColor,
+  greeting,
+  introduction,
+  startButtonText,
+  backgroundColor,
+  allowFileUpload,
+  linkBehavior,
+  position,
+  welcomeMsg,
+  suggestedQuestionList,
 }: {
   apiKey: string;
   shadowContainer?: React.RefObject<HTMLDivElement | null>;
@@ -35,6 +45,15 @@ export function StandardUI({
   darkGradient?: string;
   borderColor?: string;
   darkBorderColor?: string;
+  greeting: string;
+  introduction: string;
+  startButtonText: string;
+  backgroundColor: string;
+  allowFileUpload?: boolean;
+  linkBehavior?: "newTab" | "sameTab";
+  position?: "left" | "right";
+  welcomeMsg?: string;
+  suggestedQuestionList?: string[];
 }) {
 
 
@@ -78,6 +97,12 @@ export function StandardUI({
     name: string;
   } | null>(null);
 
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const defaultSuggestions = suggestedQuestionList
+
 
   useEffect(() => {
     if (chatHistory.length > 0) { // Start AFTER first message
@@ -102,20 +127,6 @@ export function StandardUI({
     }, 4 * 60 * 1000); // 4 minutes
   };
 
-  // const resetInactivityTimer = () => {
-  //   clearTimeout(inactivityTimer.current);
-  //   inactivityTimer.current = null;
-  //   inactivityTimer.current = setTimeout(() => {
-  //     setShowEndPopup(true);
-
-  //     // Auto-end after 30s
-  //     popupTimer.current = setTimeout(() => {
-  //       setShowReviewPopup(false);
-  //       endChatSession();
-  //     }, 10 * 1000);
-
-  //   }, 30 * 1000); // 4 minutes
-  // };
   const endChatSession = async () => {
     clearTimeout(inactivityTimer.current);
     clearTimeout(popupTimer.current);
@@ -563,10 +574,13 @@ export function StandardUI({
   };
 
   const sendMessage = async () => {
-    if (!message.trim()) return;
-    resetInactivityTimer();
     const messageText = message.trim();
+
+    if (!messageText.trim()) return;
+    setIsProcessing(true);
+    resetInactivityTimer();
     setMessage("");
+
 
     // Add user's message immediately to UI
     //addUserMessage(messageText);
@@ -611,6 +625,11 @@ export function StandardUI({
           // addBotMessage(thankMsg);
           await saveBotMessage(thankMsg, savedGuest.id, apiKey);
 
+          setIsProcessing(false);
+          if (defaultSuggestions) {
+            setSuggestedQuestions(defaultSuggestions);
+            setShowSuggestions(true);
+          }
 
         } catch (err) {
           console.error("Error saving guest info:", err);
@@ -816,6 +835,173 @@ export function StandardUI({
   };
 
 
+  function darkenColor(hex: string, amount = 20) {
+    if (!hex) return hex;
+
+    hex = hex.replace("#", "");
+    const num = parseInt(hex, 16);
+
+    let r = (num >> 16) - amount;
+    let g = ((num >> 8) & 0x00ff) - amount;
+    let b = (num & 0x0000ff) - amount;
+
+    r = Math.max(0, r);
+    g = Math.max(0, g);
+    b = Math.max(0, b);
+
+    return `#${(b | (g << 8) | (r << 16))
+      .toString(16)
+      .padStart(6, "0")}`;
+  }
+
+  const focusBorderColor = borderColor
+    ? darkenColor(borderColor, 20)
+    : "#d1cbd0";
+
+  const darkFocusBorderColor = darkBorderColor
+    ? darkenColor(darkBorderColor, 20)
+    : "#3a3538";
+
+
+  // const SuggestedQuestions = ({ questions, onSelect }: { questions: string[], onSelect: (q: string) => void }) => {
+  //   const isDark = document
+  //     .querySelector("#hertzora-chat-root")
+  //     ?.classList.contains("dark");
+
+  //   return (
+  //     <div className=" " >
+  //       {/* border rounded-lg border-t border-zinc-200 dark:border-neutral-700  */}
+  //       {/* <p className="text-center font-semibold text-sm font-medium text-black dark:text-white mt-1">You can ask me things like</p> */}
+
+  //       <div className="flex flex-col-reverse gap-2 mt-4 items-end">
+  //         <style>
+  //           {`
+  //          .hertzora-suggest-question{
+  //    background: ${suggestQuestionsBg};
+  //     border-color: ${suggestQuestionsBorder || "#50484cff"};
+  //     color: #1F2937;
+
+  //   }
+  //      .dark .hertzora-suggest-question{
+  //   color: #FFFFFF;
+  //    background: ${suggestQuestionsDark};
+  //     border-color: ${suggestQuestionsBorder || "#50484cff"};
+  //   /* opacity: 1;*/
+
+  // }
+  // .hover .hertzora-suggest-question{
+  // }`}
+  //         </style>
+  //         {/* {questions.map((q, i) => (
+  //         <button
+
+  //           key={i}
+  //           className="px-3 py-1.5 rounded-full text-sm hertzora-suggest-question"
+  //           onClick={() => onSelect(q)}
+  //         >
+  //           {q}
+  //         </button>
+  //       ))} */}
+  //       {/* px-3 py-1.5 rounded-full text-sm border transition-colors */}
+  //         {questions.map((q, i) => (
+  //           <button
+  //             key={i}
+  //             onClick={() => onSelect(q)}
+  //             className="p-2 rounded-3xl text-sm max-w-[80%] break-words"
+  //             style={{
+  //               backgroundColor: isDark
+  //                 ? suggestQuestionsDark
+  //                 : suggestQuestionsBg,
+  //               borderColor: suggestQuestionsBorder,
+  //               color: isDark ? "#ffffff" : "#1F2937",
+  //             }}
+  //           >
+  //             {q}
+  //           </button>
+  //         ))}
+
+  //       </div>
+  //     </div>
+
+  //   );
+  // };
+  const SuggestedQuestions = ({
+    questions,
+    onSelect,
+  }: {
+    questions: string[];
+    onSelect: (q: string) => void;
+  }) => {
+    const isDark = document
+      .querySelector("#hertzora-chat-root")
+      ?.classList.contains("dark");
+
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+    return (
+      <div>
+        <div className="flex flex-col-reverse gap-2 mt-4 items-end">
+          {questions.map((q, i) => {
+            const isHovered = hoveredIndex === i;
+
+            return (
+              <button
+                key={i}
+                onClick={() => onSelect(q)}
+                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                className="p-2 rounded-3xl text-sm max-w-[80%] break-words transition-all duration-200 border"
+                style={{
+                  backgroundColor: isHovered
+                    ? isDark
+                      ? suggestQuestionsDark
+                      : suggestQuestionsBg
+                    : "transparent",
+
+                  borderColor: suggestQuestionsBorder || "#50484cff",
+                  color: isDark ? "#ffffff" : "#1F2937",
+                }}
+              >
+                {q}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const handleSuggestionClick = async (question: string) => {
+    setShowSuggestions(false);
+    // setMessage(question);
+
+    // trigger normal send logic
+    if (!aiPaused) {
+      if (!roomName || !senderId) return;
+
+      try {
+        const aiResp = await saveUserMessage(question, false);
+        const generated = await generateAIResponse(
+          roomName,
+          question,
+          senderId,
+        );
+      } catch (err) {
+        console.error("AI call failed:", err);
+        setChatHistory(prev => prev.filter(msg => !msg.isTyping));
+      }
+    } else {
+      console.log("AI response paused due to live agent assignment.");
+
+      const aiResp = await saveUserMessage(question, true);
+    }
+  };
+
+  const suggestQuestionsBg = backgroundColor ? darkenColor(backgroundColor, 40) : "#c7bec2ff";
+  const suggestQuestionsBorder = backgroundColor ? darkenColor(backgroundColor, 45) : "#747071ff";
+  const suggestQuestionsDark = backgroundColor ? darkenColor(backgroundColor, 50) : "#7c797aff";
+
+
   if (!showChat) return null;
 
   return (
@@ -955,20 +1141,55 @@ export function StandardUI({
     opacity: 1;
     
   }
+      #hertzora-chat-box{
+     background: ${backgroundColor};
+    }
+      .dark #hertzora-chat-box{
+     background: #171717;
+    }
+
 `}</style>
 
-      {/* 
-.hertzora-color {
-   color: "#fff" !important;
-   background: linear-gradient(to right, #db2777, #db2777, #7e22ce) !important;
-}
+      <style>{`
+  #hertzora-chat-box input {
+    background: ${backgroundColor};
+    border: 1px solid ${borderColor || "#e9e4e6ff"};
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
 
- .hertzora-color {
-   color: "#fff" !important;
-  // backgroundImage: "linear-gradient(to right, #db2777, #6b21a8, #6b21a8)" !important;
-  
-}*/}
-      <div className="fixed bottom-6 right-6 z-50" >
+  #hertzora-chat-box input:focus,
+  #hertzora-chat-box input:focus-visible {
+    border-color: ${focusBorderColor};
+    box-shadow: 0 0 0 0.5px ${focusBorderColor};
+    outline: none;
+  }
+
+  .dark #hertzora-chat-box input {
+    background: #171717;
+    border-color: ${darkBorderColor || "#50484cff"};
+  }
+
+  .dark #hertzora-chat-box input:focus,
+  .dark #hertzora-chat-box input:focus-visible {
+    border-color: ${darkFocusBorderColor};
+    box-shadow: 0 0 0 0.5px ${darkFocusBorderColor};
+    outline: none;
+  }
+
+  #hertzora-chat-box .btnBorder {
+    background: ${backgroundColor};
+    border: 1px solid ${borderColor || "#e9e4e6ff"};
+    transition: border-color 0.25s ease;
+  }
+
+  .dark #hertzora-chat-box .btnBorder {
+    background: #171717;
+    border-color: ${darkBorderColor || "#50484cff"};
+  }
+`}</style>
+
+      <div className={`fixed bottom-6 z-50 ${position === "left" ? "left-6" : "right-6"
+        }`}>
         {/* <div className="fixed bottom-6 right-6 z-50 " > */}
         <div
           id="hertzora-chat-box"
@@ -1091,11 +1312,7 @@ export function StandardUI({
               // </div>
               <div className="mt-6 flex flex-col items-center justify-center">
 
-                {/* <Bot strokeWidth={1.75}
-                size={60}
-                className="text-pink-600 dark:text-pink-600 mb-2"
 
-              /> */}
                 <img
                   src={botIcon}
                   alt="Bot Icon"
@@ -1103,14 +1320,17 @@ export function StandardUI({
                   className="hertzora-color hertzora-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
                 <div className="flex items-center text-lg justify-center font-bold hertzora-hello-text">
-                  Hello,&nbsp;<div>there..!</div>
-                  <div className="ml-1 text-[22px]">👋</div>
+                  {/* Hello,&nbsp;<div>there..!</div> */}
+                  {greeting}
+                  {/* <div className="ml-1 text-[22px]">👋</div> */}
                 </div>
                 <div className="mt-2 font-semibold text-gray-500 dark:text-gray-400 text-lg">
-                  How can I help you today?
+                  {/* How can I help you today? */}
+                  {introduction}
                 </div>
                 <div className="text-center text-gray-400 text-sm mt-10">
-                  Start a conversation...
+                  {/* Start a conversation... */}
+                  {startButtonText}
                 </div>
               </div>
             )}
@@ -1181,64 +1401,134 @@ export function StandardUI({
                       <span className="w-1.5 h-1.5 bg-gray-600 dark:text-white rounded-full animate-bounce delay-400" />
                     </div>
                   ) : (
-                    <div>
-                      {msg.text && <span>{msg.text}</span>}
+                     <div className="markdown-body flex items-end gap-1">
+                      {msg.text &&
+                        <div className="flex-1">
+                          <Markdown
+                            options={{
+                              overrides: {
+                                h1: {
+                                  component: "div",
+                                  props: {
+                                    className: "font-bold mb-1",
+                                  },
+                                },
+                                p: {
+                                  component: "p",
+                                  props: {
+                                    className: "inline", // 👈 important
+                                  },
+                                },
+                                ol: {
+                                  component: "ol",
+                                  props: {
+                                    className: "list-decimal pl-5 mb-1",
+                                  },
+                                },
+                                ul: {
+                                  component: "ul",
+                                  props: {
+                                    className: "list-disc pl-5 mb-1",
+                                  },
+                                },
+                                li: {
+                                  component: "li",
+                                  props: {
+                                    className: "mb-0",
+                                  },
+                                },
+                                // a: {
+                                //   component: "a",
+                                //   props: {
+                                //     className: "text-blue-600 underline",
+                                //     target: "_blank",
+                                //     rel: "noopener noreferrer",
+                                //   },
+                                // },
+                                a: {
+                                  component: ({ children, ...props }: any) => (
+                                    <a
+                                      {...props}
+                                      target={linkBehavior === "sameTab" ? "_self" : "_blank"}
+                                      rel={linkBehavior === "sameTab" ? undefined : "noopener noreferrer"}
+                                      className="text-blue-600 underline break-words"
+                                    >
+                                      {children}
+                                    </a>
+                                  ),
+                                },
 
-                      {msg.uploaded_documents && (
-                        <div className="mt-2">
-                          {/\.(jpg|jpeg|png|gif)$/i.test(msg.uploaded_documents) ? (
-                            <a
-                              href={msg.uploaded_documents}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-gray-200 text-xs"
-                            >
-                              <img
-                                src={msg.uploaded_documents}
-                                alt="Uploaded"
-                                width={180}
-                                height={120}
-                                className="rounded-lg border border-zinc-200 dark:border-neutral-700"
-                              />
-                            </a>
-                          ) :
-                            /\.(mp3|wav|ogg)$/i.test(msg.uploaded_documents) || msg.uploaded_documents.includes("audio") ? (
+                              },
+                            }}
+                          >
+                            {msg.text}
+                          </Markdown>
+                        </div>
+                      }
+                      {/* {msg.text && <span>{msg.text}</span>} */}
+                     
 
-                              <audio controls className="mt-1 w-full">
-                                <source src={msg.uploaded_documents} />
-
-                              </audio>
-                            ) : (
+                        {msg.uploaded_documents && (
+                          <div className="mt-2">
+                            {/\.(jpg|jpeg|png|gif)$/i.test(msg.uploaded_documents) ? (
                               <a
                                 href={msg.uploaded_documents}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-200"
+                                className="text-gray-200 text-xs"
                               >
-                                <div className={`flex gap-2 
-                                ${msg.sender === "user"
-                                    ? "text-white rounded-br-none relative"
-                                    : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
-                                  }`}> <FileText size={20} />View Document</div>
-
+                                <img
+                                  src={msg.uploaded_documents}
+                                  alt="Uploaded"
+                                  width={180}
+                                  height={120}
+                                  className="rounded-lg border border-zinc-200 dark:border-neutral-700"
+                                />
                               </a>
-                            )}
-                        </div>
-                      )}
-                      {/* time stamp */}
+                            ) :
+                              /\.(mp3|wav|ogg)$/i.test(msg.uploaded_documents) || msg.uploaded_documents.includes("audio") ? (
 
-                      {msg.sender === "user" && (
-                        <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
+                                <audio controls className="mt-1 w-full">
+                                  <source src={msg.uploaded_documents} />
+
+                                </audio>
+                              ) : (
+                                <a
+                                  href={msg.uploaded_documents}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-gray-200"
+                                >
+                                  <div className={`flex gap-2 
+                                ${msg.sender === "user"
+                                      ? "text-white rounded-br-none relative"
+                                      : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
+                                    }`}> <FileText size={20} />View Document</div>
+
+                                </a>
+                              )}
+                          </div>
+                        )}
+                        {/* time stamp */}
+
+                        {msg.sender === "user" && (
+                          // <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
+                          //   {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
+                          // </span>
+                            <span className="text-[10px] opacity-70 whitespace-nowrap self-end">
                           {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
                         </span>
-                      )}
-                      {msg.sender === "bot" && msg.timestamps?.received && (
-                        <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
-                          {msg.timestamps.received}
+                        )}
+                        {msg.sender === "bot" && msg.timestamps?.received && (
+                          // <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
+                          //   {msg.timestamps.received}
+                          // </span>
+                            <span className="text-[10px] opacity-70 whitespace-nowrap self-end">
+                          {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
                         </span>
-                      )}
+                        )}
 
-                    </div>
+                      </div>
 
 
 
@@ -1249,42 +1539,51 @@ export function StandardUI({
 
 
 
-                </div>
+                    </div>
 
                 {msg.sender === "user" && (
-                  // <div className="flex-shrink-0 relative">
-                  //   <img
-                  //     src="../chat.jpg"
-                  //     alt="user"
-                  //     className="h-[30px] w-[30px] rounded-full object-cover"
-                  //   />
-                  // </div>
+                    // <div className="flex-shrink-0 relative">
+                    //   <img
+                    //     src="../chat.jpg"
+                    //     alt="user"
+                    //     className="h-[30px] w-[30px] rounded-full object-cover"
+                    //   />
+                    // </div>
 
-                  // <div className="flex-shrink-0 relative flex items-center justify-center bg-pink-600  rounded-full h-[30px] w-[30px]">
-                  //   <UserRound size="18" className="text-gray-200" />
-                  // </div>
-                  <div className="flex-shrink-0 relative">
-                    {/* <img
+                    // <div className="flex-shrink-0 relative flex items-center justify-center bg-pink-600  rounded-full h-[30px] w-[30px]">
+                    //   <UserRound size="18" className="text-gray-200" />
+                    // </div>
+                    <div className="flex-shrink-0 relative">
+                      {/* <img
                         src="/chat.png"
                         alt="user"
                         height={30}
                         width={30}
                         className="rounded-full object-cover h-[30px] w-[30px]"
                       /> */}
-                    <div className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
-                      <UserRound size="18" className="uIcon text-gray-200" />
+                      <div className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
+                        <UserRound size="18" className="uIcon text-gray-200" />
+                      </div>
+                      <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
                     </div>
-                    <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
             ))}
 
-            <div ref={chatEndRef} />
-          </div>
+                <div ref={chatEndRef} />
+                 {message === "" && roomName && senderId && !isProcessing && suggestedQuestionList && suggestedQuestionList?.length > 0 &&
+              <div className="">
+                {/* items-center justify-center */}
+                {/* mt-6 flex flex-col items-end justify-end */}
+                {/* <SuggestedQuestions questions={["How do I upgrade?", "What are your plans?", "Contact support"]} /> */}
+                <SuggestedQuestions questions={suggestedQuestionList} onSelect={handleSuggestionClick} />
+              </div>
 
-          {/* Input */}
-          <div className="flex items-center border-t border-zinc-200 dark:border-neutral-700 p-3 gap-1" >
+            }
+              </div>
+
+          {/* Input */ }
+              < div className = "flex items-center border-t border-zinc-200 dark:border-neutral-700 p-3 gap-1" >
 
             <input
               type="file"
@@ -1336,7 +1635,7 @@ export function StandardUI({
             </button> 
              background: "linear-gradient(to right, #7c3aed, #ec4899, #3b82f6)",*/}
 
-            <style>{`
+              <style > {`
   .send-button {
    
     display: flex;
@@ -1354,66 +1653,66 @@ export function StandardUI({
     height: 16px;
   }
 `}</style>
-            {/* #db2777 */}
-            <button onClick={sendMessage} style={{ background: gradient }} className="send-button hertzora-background">
-              <SendHorizontal />
-            </button>
+          {/* #db2777 */}
+          <button onClick={sendMessage} style={{ background: gradient }} className="send-button hertzora-background">
+            <SendHorizontal />
+          </button>
 
-          </div>
+        </div>
 
-          <div className="font-medium text-center border-b border-zinc-200 dark:border-neutral-700 pb-3 text-xs text-zinc-400 dark:text-zinc-400">
-            {botName} may produce inaccurate information
-          </div>
-          <div className="flex items-center pt-2 justify-center font-medium text-center pb-3 text-sm text-zinc-400 dark:text-zinc-400">
-            Powered by{" "}
+        <div className="font-medium text-center border-b border-zinc-200 dark:border-neutral-700 pb-3 text-xs text-zinc-400 dark:text-zinc-400">
+          {botName} may produce inaccurate information
+        </div>
+        <div className="flex items-center pt-2 justify-center font-medium text-center pb-3 text-sm text-zinc-400 dark:text-zinc-400">
+          Powered by{" "}
 
-            {/* <BecomepartnerCard/ > */}
+          {/* <BecomepartnerCard/ > */}
 
-            <div className="relative group inline-block">
+          <div className="relative group inline-block">
 
-              {/* Trigger */}
-              <div className="flex items-center gap-1 hover:text-black dark:hover:text-white cursor-pointer">
-                {/* <div className="text-sm font-bold bg-gradient-to-r from-pink-600 via-pink-400 to-blue-600 bg-clip-text text-transparent">
+            {/* Trigger */}
+            <div className="flex items-center gap-1 hover:text-black dark:hover:text-white cursor-pointer">
+              {/* <div className="text-sm font-bold bg-gradient-to-r from-pink-600 via-pink-400 to-blue-600 bg-clip-text text-transparent">
                   &nbsp;hertzora
                 </div> */}
 
-                {/* Inline CSS for this page only */}
-                <style>
-                  {`
+              {/* Inline CSS for this page only */}
+              <style>
+                {`
           .gradient-text {
             background: linear-gradient(to right, #7c3aed, #ec4899, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
           }
         `}
-                </style>
+              </style>
 
-                {/* Use the class */}
-                <a href="https://app.hertzora.ai/">
-                  <div className="gradient-text font-bold text-sm">
-                    &nbsp;HertZora
-                  </div>
-                </a>
-
-                <div className="relative w-6 h-6 flex items-center justify-center">
-                  {/* Outer curved border */}
-                  <div className="absolute inset-0 border border-gray-400 rounded-md opacity-60"></div>
-
-                  <div className="absolute inset-0 border border-gray-400 rounded-md opacity-60"></div>
-                  <div className="absolute w-2 h-2 bg-purple-600 rounded-full top-1 left-1 opacity-60"></div>
-                  <div className="absolute w-1 h-1 bg-gray-400 rounded-full top-1 right-1 opacity-60"></div>
-                  <div className="absolute w-1 h-1 bg-gray-400 rounded-full bottom-1 left-1 opacity-50"></div>
-                  <div className="absolute w-2 h-0.5 bg-gray-400 bottom-1.5 right-1 opacity-30"></div>
-                  <span className="absolute text-xs text-gray-600 font-bold">
-                    AI
-                  </span>
+              {/* Use the class */}
+              <a href="https://app.hertzora.ai/">
+                <div className="gradient-text font-bold text-sm">
+                  &nbsp;HertZora
                 </div>
+              </a>
 
+              <div className="relative w-6 h-6 flex items-center justify-center">
+                {/* Outer curved border */}
+                <div className="absolute inset-0 border border-gray-400 rounded-md opacity-60"></div>
+
+                <div className="absolute inset-0 border border-gray-400 rounded-md opacity-60"></div>
+                <div className="absolute w-2 h-2 bg-purple-600 rounded-full top-1 left-1 opacity-60"></div>
+                <div className="absolute w-1 h-1 bg-gray-400 rounded-full top-1 right-1 opacity-60"></div>
+                <div className="absolute w-1 h-1 bg-gray-400 rounded-full bottom-1 left-1 opacity-50"></div>
+                <div className="absolute w-2 h-0.5 bg-gray-400 bottom-1.5 right-1 opacity-30"></div>
+                <span className="absolute text-xs text-gray-600 font-bold">
+                  AI
+                </span>
               </div>
 
-              {/* Popover Above */}
-              <div
-                className="
+            </div>
+
+            {/* Popover Above */}
+            <div
+              className="
       absolute left-0 bottom-full mb-2   /* makes it go UP */
       hidden group-hover:block 
       text-xs 
@@ -1423,16 +1722,16 @@ export function StandardUI({
       z-50
       
     "
-              >
-                .....
-              </div>
+            >
+              .....
             </div>
-
-
-
           </div>
+
+
+
         </div>
       </div>
+    </div >
     </>
   );
 }
