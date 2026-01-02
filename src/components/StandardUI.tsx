@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Bot, BotMessageSquare, FileText, Frown, Laugh, LockIcon, Meh, Plus, SendHorizontal, Sparkles, UserRound } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+// import ReactMarkdown from "react-markdown";
+// import remarkGfm from "remark-gfm";
 import Markdown from "markdown-to-jsx";
 
 type ChatMessage = {
@@ -16,7 +18,10 @@ type ChatMessage = {
   };
   isTyping?: boolean;
   uploaded_documents?: any;
+
 };
+
+
 
 export function StandardUI({
   apiKey,
@@ -96,6 +101,7 @@ export function StandardUI({
     id: string;
     name: string;
   } | null>(null);
+
 
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -257,12 +263,11 @@ export function StandardUI({
     getUserCountry().then((c) => setCountry(c));
   }, []);
 
-  //
   //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
-  // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
   const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
-
-  // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
+  //const API_BASE_URL = "https://app.hostie.ai/api/clientCustomerChatBox";
+// https://app.hertzora.ai/hostie/overview
+  // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";  
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
@@ -418,11 +423,6 @@ export function StandardUI({
       }
     };
 
-
-    // eventSource.onerror = (err) => {
-    //   console.error("SSE connection error:", err);
-    //   eventSource.close();
-    // };
     eventSource.onerror = (err) => {
 
       // optionally reconnect after delay
@@ -542,6 +542,7 @@ export function StandardUI({
 
       return newHistory;
     });
+
     return res.json();
   };
 
@@ -579,8 +580,8 @@ export function StandardUI({
     if (!messageText.trim()) return;
     setIsProcessing(true);
     resetInactivityTimer();
-    setMessage("");
 
+    setMessage("");
 
     // Add user's message immediately to UI
     //addUserMessage(messageText);
@@ -594,9 +595,15 @@ export function StandardUI({
       addUserMessage(messageText);
       setAskedForInfo(true);
       // const askMsg = "Before we continue, could you please share your name or email?";
-      const askMsg = `👋 Hi! ${botName} here. Before we continue, could you share your name or email? I'd love to personalise the conversation for you.`;
+      // const askMsg = `👋 Hi! ${botName} here.`;
+      const askMsg = welcomeMsg || `👋 Hi! ${botName} here.`;
+      const askMsg2 = "Before we continue, could you share your name or email?"
+
       //addBotMessage(askMsg);
       await saveBotMessage(askMsg, senderId, apiKey,);
+
+      await saveBotMessage(askMsg2, senderId, apiKey,);
+
       return; // Don't save user message yet
     }
 
@@ -618,15 +625,16 @@ export function StandardUI({
           sessionStorage.setItem("guestContactId", savedGuest.id)
 
           //  await saveUserMessage(message, true);
-          await saveUserMessageWithSender(message, true, savedGuest.id);
+          await saveUserMessageWithSender(messageText, true, savedGuest.id);
 
 
           const thankMsg = `Thanks ${savedGuest.name || savedGuest.email}! You can continue chatting now..!`;
           // addBotMessage(thankMsg);
           await saveBotMessage(thankMsg, savedGuest.id, apiKey);
-
           setIsProcessing(false);
           if (defaultSuggestions) {
+
+
             setSuggestedQuestions(defaultSuggestions);
             setShowSuggestions(true);
           }
@@ -645,8 +653,6 @@ export function StandardUI({
     //  Guest/user already has info → save user message & get AI reply
     if (!aiPaused) {
       if (!roomName || !senderId) return;
-
-
 
       try {
         const aiResp = await saveUserMessage(messageText, false);
@@ -670,6 +676,7 @@ export function StandardUI({
 
       const aiResp = await saveUserMessage(messageText, true);
     }
+
   };
 
   useEffect(() => {
@@ -833,7 +840,6 @@ export function StandardUI({
     if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
     return (parts[0][0] + parts[1][0]).toUpperCase();
   };
-
 
   function darkenColor(hex: string, amount = 20) {
     if (!hex) return hex;
@@ -1118,7 +1124,7 @@ export function StandardUI({
    color: "#fff" !important;
    
 
-`}</style>
+      `}</style>
       <style>{`
   .hertzora-background {
     background: ${gradient};
@@ -1141,15 +1147,36 @@ export function StandardUI({
     opacity: 1;
     
   }
-      #hertzora-chat-box{
+    #hertzora-chat-box{
      background: ${backgroundColor};
     }
       .dark #hertzora-chat-box{
      background: #171717;
     }
 
+    
+      
+     /*
+     #hertzora-chat-box input{
+     background: ${backgroundColor};
+      border: 1px solid ${borderColor || "#e9e4e6ff"};
+    transition: border-color 0.3s;
+    }
+      .dark #hertzora-chat-box input{
+     background: #171717;
+      border-color: ${darkBorderColor || "#50484cff"};
+    }
+        #hertzora-chat-box .btnBorder{
+     background: ${backgroundColor};
+      border: 1px solid ${borderColor || "#e9e4e6ff"};
+    transition: border-color 0.3s;
+    }
+      .dark #hertzora-chat-box .btnBorder{
+     background: #171717;
+      border-color: ${darkBorderColor || "#50484cff"};
+    }*/
+      
 `}</style>
-
       <style>{`
   #hertzora-chat-box input {
     background: ${backgroundColor};
@@ -1193,9 +1220,9 @@ export function StandardUI({
         {/* <div className="fixed bottom-6 right-6 z-50 " > */}
         <div
           id="hertzora-chat-box"
-          className="flex flex-col w-[340px] h-[85vh] rounded-2xl shadow-xl border border-zinc-100 dark:border-neutral-800  overflow-hidden  transition-colors duration-300 bg-white dark:bg-neutral-900"
+          className="flex flex-col w-[340px] h-[85vh] rounded-2xl shadow-xl border border-zinc-100 dark:border-neutral-800  overflow-hidden  transition-colors duration-300 "
         >
-          {/* Header */}
+          {/* Header bg-white dark:bg-neutral-900*/}
 
 
           <div className="flex items-center justify-between p-3 text-sm font-semibold">
@@ -1247,7 +1274,7 @@ export function StandardUI({
                   Upgrade to premium to customize your chat page logo and colors.
                 </PopoverContent>
               </Popover> */}
-              {botName !== "HertZora" && (
+              {botName !== "hertzora" && (
                 <div className="relative">
                   <button
                     onClick={() => setShowPremiumPopup((prev) => !prev)}
@@ -1296,6 +1323,7 @@ export function StandardUI({
 
           {/* Chat area */}
           <div className="flex-1 overflow-y-auto p-3 space-y-2 ">
+
             {chatHistory.length === 0 && (
               // <div className="mt-10 flex flex-col items-center justify-center text-center">
               //   <Bot strokeWidth={1.75}
@@ -1312,11 +1340,14 @@ export function StandardUI({
               // </div>
               <div className="mt-6 flex flex-col items-center justify-center">
 
+                {/* <Bot strokeWidth={1.75}
+                size={60}
+                className="text-pink-600 dark:text-pink-600 mb-2"
 
+              /> */}
                 <img
                   src={botIcon}
                   alt="Bot Icon"
-
                   className="hertzora-color hertzora-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
                 <div className="flex items-center text-lg justify-center font-bold hertzora-hello-text">
@@ -1334,6 +1365,9 @@ export function StandardUI({
                 </div>
               </div>
             )}
+
+
+
 
             {chatHistory.map((msg, i) => (
               <div
@@ -1362,28 +1396,28 @@ export function StandardUI({
                 <style>
                   {`
          /* global.css or module.css */
-.chat-bubble p {
-  margin: 0.25rem 0;
-  line-height: 1.4;
-}
+          .chat-bubble p {
+            margin: 0.25rem 0;
+            line-height: 1.4;
+          }
 
-.chat-bubble a {
-  color: #ed3ab7ff; /* pink link */
-  text-decoration: underline;
-}
+          .chat-bubble a {
+            color: #ed3ab7ff; /* pink link */
+            text-decoration: underline;
+          }
 
-.chat-bubble ul {
-  padding-left: 1rem;
-  list-style-type: disc;
-}
+          .chat-bubble ul {
+            padding-left: 1rem;
+            list-style-type: disc;
+          }
 
-.chat-bubble strong {
-  font-weight: 600;
-}
+          .chat-bubble strong {
+            font-weight: 600;
+          }
 
-.chat-bubble em {
-  font-style: italic;
-}
+          .chat-bubble em {
+            font-style: italic;
+          }
 
         `}
                 </style>
@@ -1401,7 +1435,8 @@ export function StandardUI({
                       <span className="w-1.5 h-1.5 bg-gray-600 dark:text-white rounded-full animate-bounce delay-400" />
                     </div>
                   ) : (
-                     <div className="markdown-body flex items-end gap-1">
+                    // <div className="relative">
+                    <div className="markdown-body flex items-end gap-1">
                       {msg.text &&
                         <div className="flex-1">
                           <Markdown
@@ -1466,112 +1501,104 @@ export function StandardUI({
                         </div>
                       }
                       {/* {msg.text && <span>{msg.text}</span>} */}
-                     
+                      {msg.uploaded_documents && (
+                        <div className="mt-2">
+                          {/\.(jpg|jpeg|png|gif)$/i.test(msg.uploaded_documents) ? (
+                            <a
+                              href={msg.uploaded_documents}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-200 text-xs"
+                            >
+                              <img
+                                src={msg.uploaded_documents}
+                                alt="Uploaded"
+                                width={180}
+                                height={120}
+                                className="rounded-lg border border-zinc-200 dark:border-neutral-700"
+                              />
+                            </a>
+                          ) :
+                            /\.(mp3|wav|ogg)$/i.test(msg.uploaded_documents) || msg.uploaded_documents.includes("audio") ? (
 
-                        {msg.uploaded_documents && (
-                          <div className="mt-2">
-                            {/\.(jpg|jpeg|png|gif)$/i.test(msg.uploaded_documents) ? (
+                              <audio controls className="mt-1 w-full">
+                                <source src={msg.uploaded_documents} />
+
+                              </audio>
+                            ) : (
                               <a
                                 href={msg.uploaded_documents}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-200 text-xs"
+                                className="text-gray-200"
                               >
-                                <img
-                                  src={msg.uploaded_documents}
-                                  alt="Uploaded"
-                                  width={180}
-                                  height={120}
-                                  className="rounded-lg border border-zinc-200 dark:border-neutral-700"
-                                />
-                              </a>
-                            ) :
-                              /\.(mp3|wav|ogg)$/i.test(msg.uploaded_documents) || msg.uploaded_documents.includes("audio") ? (
-
-                                <audio controls className="mt-1 w-full">
-                                  <source src={msg.uploaded_documents} />
-
-                                </audio>
-                              ) : (
-                                <a
-                                  href={msg.uploaded_documents}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-gray-200"
-                                >
-                                  <div className={`flex gap-2 
+                                <div className={`flex gap-2 
                                 ${msg.sender === "user"
-                                      ? "text-white rounded-br-none relative"
-                                      : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
-                                    }`}> <FileText size={20} />View Document</div>
+                                    ? "text-white rounded-br-none relative"
+                                    : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
+                                  }`}> <FileText size={20} />View Document</div>
 
-                                </a>
-                              )}
-                          </div>
-                        )}
-                        {/* time stamp */}
-
-                        {msg.sender === "user" && (
-                          // <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
-                          //   {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
-                          // </span>
-                            <span className="text-[10px] opacity-70 whitespace-nowrap self-end">
+                              </a>
+                            )}
+                        </div>
+                      )}
+                      {/* time stamp */}
+                      {msg.sender === "user" && (
+                        // <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
+                        //   {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
+                        // </span>
+                        <span className="text-[10px] opacity-70 whitespace-nowrap self-end">
                           {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
                         </span>
-                        )}
-                        {msg.sender === "bot" && msg.timestamps?.received && (
-                          // <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
-                          //   {msg.timestamps.received}
-                          // </span>
-                            <span className="text-[10px] opacity-70 whitespace-nowrap self-end">
+                      )}
+                      {msg.sender === "bot" && msg.timestamps?.received && (
+                        // <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
+                        //   {msg.timestamps.received}
+                        // </span>
+                        <span className="text-[10px] opacity-70 whitespace-nowrap self-end">
                           {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
                         </span>
-                        )}
+                      )}
 
-                      </div>
-
-
-
-
-
+                    </div>
 
                   )}
 
 
 
-                    </div>
+                </div>
 
                 {msg.sender === "user" && (
-                    // <div className="flex-shrink-0 relative">
-                    //   <img
-                    //     src="../chat.jpg"
-                    //     alt="user"
-                    //     className="h-[30px] w-[30px] rounded-full object-cover"
-                    //   />
-                    // </div>
+                  // <div className="flex-shrink-0 relative">
+                  //   <img
+                  //     src="../chat.jpg"
+                  //     alt="user"
+                  //     className="h-[30px] w-[30px] rounded-full object-cover"
+                  //   />
+                  // </div>
 
-                    // <div className="flex-shrink-0 relative flex items-center justify-center bg-pink-600  rounded-full h-[30px] w-[30px]">
-                    //   <UserRound size="18" className="text-gray-200" />
-                    // </div>
-                    <div className="flex-shrink-0 relative">
-                      {/* <img
+                  // <div className="flex-shrink-0 relative flex items-center justify-center bg-pink-600  rounded-full h-[30px] w-[30px]">
+                  //   <UserRound size="18" className="text-gray-200" />
+                  // </div>
+                  <div className="flex-shrink-0 relative">
+                    {/* <img
                         src="/chat.png"
                         alt="user"
                         height={30}
                         width={30}
                         className="rounded-full object-cover h-[30px] w-[30px]"
                       /> */}
-                      <div className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
-                        <UserRound size="18" className="uIcon text-gray-200" />
-                      </div>
-                      <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
+                    <div className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
+                      <UserRound size="18" className="uIcon text-gray-200" />
                     </div>
-                  )}
-                </div>
+                    <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
+                  </div>
+                )}
+              </div>
             ))}
 
-                <div ref={chatEndRef} />
-                 {message === "" && roomName && senderId && !isProcessing && suggestedQuestionList && suggestedQuestionList?.length > 0 &&
+            <div ref={chatEndRef} />
+            {message === "" && roomName && senderId && !isProcessing && suggestedQuestionList && suggestedQuestionList?.length > 0 &&
               <div className="">
                 {/* items-center justify-center */}
                 {/* mt-6 flex flex-col items-end justify-end */}
@@ -1580,10 +1607,10 @@ export function StandardUI({
               </div>
 
             }
-              </div>
+          </div>
 
-          {/* Input */ }
-              < div className = "flex items-center border-t border-zinc-200 dark:border-neutral-700 p-3 gap-1" >
+          {/* Input */}
+          <div className="flex items-center border-t border-zinc-200 dark:border-neutral-700 p-3 gap-1" >
 
             <input
               type="file"
@@ -1595,15 +1622,17 @@ export function StandardUI({
                 }
               }}
             />
+            {allowFileUpload && (
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center justify-center h-9 w-9 rounded-full  text-zinc-500 dark:text-zinc-400 btnBorder"
+              >
+                {/* border border-zinc-200 dark:border-neutral-700 */}
+                {/* mr-2 */}
+                <Plus className="w-4 h-4" />
+              </button>
 
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center justify-center h-9 w-9 rounded-full border border-zinc-200 dark:border-neutral-700 text-zinc-500 dark:text-zinc-400 "
-            >
-              {/* mr-2 */}
-              <Plus className="w-4 h-4" />
-            </button>
-
+            )}
             <input
               type="text"
               value={message}
@@ -1615,7 +1644,7 @@ export function StandardUI({
               }}
               onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
               placeholder="Ask your question"
-              className="flex-1 outline-none border border-zinc-200 dark:border-neutral-700 rounded-full px-3 py-2 text-sm text-zinc-500 dark:text-zinc-400 dark:bg-neutral-900"
+              className="flex-1 outline-none rounded-full px-3 py-2 text-sm text-zinc-500 dark:text-zinc-400 btnBorder"
 
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
@@ -1627,6 +1656,7 @@ export function StandardUI({
                 e.currentTarget.style.borderColor = ""; // reset to Tailwind default
               }}
             />
+            {/* border border-zinc-200 dark:border-neutral-700  dark:bg-neutral-900 */}
             {/* <button
               onClick={sendMessage}
               className="flex items-center justify-center h-9 w-9 rounded-full bg-gradient-to-r from-pink-600 to-pink-700 text-white ml-2"
@@ -1635,7 +1665,7 @@ export function StandardUI({
             </button> 
              background: "linear-gradient(to right, #7c3aed, #ec4899, #3b82f6)",*/}
 
-              <style > {`
+            <style>{`
   .send-button {
    
     display: flex;
@@ -1653,66 +1683,66 @@ export function StandardUI({
     height: 16px;
   }
 `}</style>
-          {/* #db2777 */}
-          <button onClick={sendMessage} style={{ background: gradient }} className="send-button hertzora-background">
-            <SendHorizontal />
-          </button>
+            {/* #7e23a8ff */}
+            <button onClick={sendMessage} className="send-button hertzora-background">
+              <SendHorizontal />
+            </button>
 
-        </div>
+          </div>
 
-        <div className="font-medium text-center border-b border-zinc-200 dark:border-neutral-700 pb-3 text-xs text-zinc-400 dark:text-zinc-400">
-          {botName} may produce inaccurate information
-        </div>
-        <div className="flex items-center pt-2 justify-center font-medium text-center pb-3 text-sm text-zinc-400 dark:text-zinc-400">
-          Powered by{" "}
+          <div className="font-medium text-center border-b border-zinc-200 dark:border-neutral-700 pb-3 text-xs text-zinc-400 dark:text-zinc-400">
+            {botName} may produce inaccurate information
+          </div>
+          <div className="flex items-center pt-2 justify-center font-medium text-center pb-3 text-sm text-zinc-400 dark:text-zinc-400">
+            Powered by{" "}
 
-          {/* <BecomepartnerCard/ > */}
+            {/* <BecomepartnerCard/ > */}
 
-          <div className="relative group inline-block">
+            <div className="relative group inline-block">
 
-            {/* Trigger */}
-            <div className="flex items-center gap-1 hover:text-black dark:hover:text-white cursor-pointer">
-              {/* <div className="text-sm font-bold bg-gradient-to-r from-pink-600 via-pink-400 to-blue-600 bg-clip-text text-transparent">
+              {/* Trigger */}
+              <div className="flex items-center gap-1 hover:text-black dark:hover:text-white cursor-pointer">
+                {/* <div className="text-sm font-bold bg-gradient-to-r from-pink-600 via-pink-400 to-blue-600 bg-clip-text text-transparent">
                   &nbsp;hertzora
                 </div> */}
 
-              {/* Inline CSS for this page only */}
-              <style>
-                {`
+                {/* Inline CSS for this page only */}
+                <style>
+                  {`
           .gradient-text {
             background: linear-gradient(to right, #7c3aed, #ec4899, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
           }
         `}
-              </style>
+                </style>
 
-              {/* Use the class */}
-              <a href="https://app.hertzora.ai/">
-                <div className="gradient-text font-bold text-sm">
-                  &nbsp;HertZora
+                {/* Use the class */}
+                <a href="https://app.hostingate.com/">
+                  <div className="gradient-text font-bold text-sm">
+                    &nbsp;hertzora
+                  </div>
+                </a>
+
+                <div className="relative w-6 h-6 flex items-center justify-center">
+                  {/* Outer curved border */}
+                  <div className="absolute inset-0 border border-gray-400 rounded-md opacity-60"></div>
+
+                  <div className="absolute inset-0 border border-gray-400 rounded-md opacity-60"></div>
+                  <div className="absolute w-2 h-2 bg-purple-600 rounded-full top-1 left-1 opacity-60"></div>
+                  <div className="absolute w-1 h-1 bg-gray-400 rounded-full top-1 right-1 opacity-60"></div>
+                  <div className="absolute w-1 h-1 bg-gray-400 rounded-full bottom-1 left-1 opacity-50"></div>
+                  <div className="absolute w-2 h-0.5 bg-gray-400 bottom-1.5 right-1 opacity-30"></div>
+                  <span className="absolute text-xs text-gray-600 font-bold">
+                    AI
+                  </span>
                 </div>
-              </a>
 
-              <div className="relative w-6 h-6 flex items-center justify-center">
-                {/* Outer curved border */}
-                <div className="absolute inset-0 border border-gray-400 rounded-md opacity-60"></div>
-
-                <div className="absolute inset-0 border border-gray-400 rounded-md opacity-60"></div>
-                <div className="absolute w-2 h-2 bg-purple-600 rounded-full top-1 left-1 opacity-60"></div>
-                <div className="absolute w-1 h-1 bg-gray-400 rounded-full top-1 right-1 opacity-60"></div>
-                <div className="absolute w-1 h-1 bg-gray-400 rounded-full bottom-1 left-1 opacity-50"></div>
-                <div className="absolute w-2 h-0.5 bg-gray-400 bottom-1.5 right-1 opacity-30"></div>
-                <span className="absolute text-xs text-gray-600 font-bold">
-                  AI
-                </span>
               </div>
 
-            </div>
-
-            {/* Popover Above */}
-            <div
-              className="
+              {/* Popover Above */}
+              <div
+                className="
       absolute left-0 bottom-full mb-2   /* makes it go UP */
       hidden group-hover:block 
       text-xs 
@@ -1722,16 +1752,16 @@ export function StandardUI({
       z-50
       
     "
-            >
-              .....
+              >
+                .....
+              </div>
             </div>
+
+
+
           </div>
-
-
-
         </div>
       </div>
-    </div >
     </>
   );
 }
