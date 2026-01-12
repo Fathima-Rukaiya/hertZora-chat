@@ -1721,7 +1721,7 @@ export function StandardUI({
                 </style>
 
                 {/* Use the class */}
-                <a href="https://app.hostingate.com/">
+                <a href="https://app.hertzora.ai/">
                   <div className="gradient-text font-bold text-sm">
                     &nbsp;hertzora
                   </div>
