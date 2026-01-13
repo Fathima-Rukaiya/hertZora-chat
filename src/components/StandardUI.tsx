@@ -78,7 +78,6 @@ export function StandardUI({
     const saved = sessionStorage.getItem("aiPaused");
     return saved === "true"; // restore previous state
   });
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
 
   const [userInfo, setUserInfo] = useState<{ name?: string; email?: string } | null>(null);
@@ -210,20 +209,20 @@ export function StandardUI({
       }
     }
 
-    function drawPoweredByhertzora(doc: any, startY: number) {
+    function drawPoweredByHostie(doc: any, startY: number) {
       const pageWidth = doc.internal.pageSize.getWidth();
       const y = startY + 10;
 
       const poweredBy = "Powered by";
-      const hertzora = "HertZora";
+      const hostie = "Hostie";
       const gap = 1;
 
       doc.setFont("Inter", "bold");
       doc.setFontSize(12);
 
       const poweredByWidth = doc.getTextWidth(poweredBy);
-      const hertzoraWidth = doc.getTextWidth(hertzora);
-      const totalWidth = poweredByWidth + gap + hertzoraWidth;
+      const hostieWidth = doc.getTextWidth(hostie);
+      const totalWidth = poweredByWidth + gap + hostieWidth;
 
       const startX = (pageWidth - totalWidth) / 2;
 
@@ -231,10 +230,10 @@ export function StandardUI({
       doc.setTextColor(140, 140, 140);
       doc.text(poweredBy, startX, y);
 
-      // hertzora (gradient text ONLY)
+      // Hostie (gradient text ONLY)
       drawGradientText(
         doc,
-        hertzora,
+        hostie,
         startX + poweredByWidth + gap,
         y,
         12
@@ -339,7 +338,7 @@ export function StandardUI({
     doc.setLineWidth(0.4);
     doc.line(tableXStart, lineY, tableXEnd, lineY); // horizontal line matching table width
 
-    drawPoweredByhertzora(doc, tableEndY);
+    drawPoweredByHostie(doc, tableEndY);
 
     doc.save("chat-transcript.pdf");
   };
@@ -387,9 +386,9 @@ export function StandardUI({
     setAiPaused(false);
     sessionStorage.removeItem("aiPaused");
     setShowSuggestedOnce(false);
-    setShowQuickAssigneeReview(false);
-    setShowQuickReview(false)
-    setShowDownloadPDF(false)
+setShowQuickAssigneeReview(false);
+setShowQuickReview(false)
+setShowDownloadPDF(false)
     // create new room id
     const newRoom = crypto.randomUUID();
     setRoomName(newRoom);
@@ -397,7 +396,7 @@ export function StandardUI({
     sessionStorage.setItem("room", newRoom);
 
     setIsGuest(true);
-
+    
 
     let endStatement = endReason || "Your previous chat has ended due to inactivity. How can I assist you now?";
     addBotMessage(endStatement);
@@ -432,8 +431,8 @@ export function StandardUI({
     setAiPaused(false);
     sessionStorage.removeItem("aiPaused");
     setShowSuggestedOnce(false);
-    setShowQuickAssigneeReview(false);
-    setShowDownloadPDF(false);
+setShowQuickAssigneeReview(false);
+ setShowDownloadPDF(false);
     // create new room id
     const newRoom = crypto.randomUUID();
     setRoomName(newRoom);
@@ -442,7 +441,7 @@ export function StandardUI({
 
     setIsGuest(true);
     setShowQuickReview(false)
-
+   
     let endStatement = endReason || "";
     if (endStatement)
       addBotMessage(endStatement);
@@ -487,10 +486,10 @@ export function StandardUI({
     getUserCountry().then((c) => setCountry(c));
   }, []);
 
-  const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
+  //
   //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
-  // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
-  //const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
+  const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
+  //const API_BASE_URL = "https://app.hostie.ai/api/clientCustomerChatBox";
 
   // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
   useEffect(() => {
@@ -783,7 +782,7 @@ export function StandardUI({
       body: JSON.stringify({ room_id: roomName, message: text, receiver_id: receiverId }),
     });
   };
-  //C:\Users\User\Desktop\amez\hertzora-dashboard\src\app\api\clientCustomerChatBox\aiResponceGenerate
+  //C:\Users\User\Desktop\amez\hostie-dashboard\src\app\api\clientCustomerChatBox\aiResponceGenerate
   const generateAIResponse = async (room_id: string, message: string, sender_id: string) => {
     const typingMessage: ChatMessage = { sender: "bot", text: "", isTyping: true };
     setChatHistory(prev => [...prev, typingMessage]);
@@ -838,21 +837,21 @@ export function StandardUI({
     onNegative: () => void;
   }) => {
     const isDark = document
-      .querySelector("#hertzora-chat-root")
+      .querySelector("#hostie-chat-root")
       ?.classList.contains("dark");
 
-    const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+      const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
     const hoverBg = darkenColor(baseBg, 12);
 
-    const baseStyle = {
-      backgroundColor: baseBg,
-      borderColor: suggestQuestionsBorder,
-      color: "#333",
-    };
+      const baseStyle = {
+    backgroundColor: baseBg,
+    borderColor: suggestQuestionsBorder,
+    color: "#333",
+  };
 
-    const hoverStyle = {
-      backgroundColor: hoverBg,
-    };
+  const hoverStyle = {
+    backgroundColor: hoverBg,
+  };
 
     return (
       <div className="flex flex-col items-end gap-2 mt-3">
@@ -860,12 +859,12 @@ export function StandardUI({
           onClick={onPositive}
           className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
           style={baseStyle}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = hoverBg)
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = baseBg)
-          }
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.backgroundColor = hoverBg)
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.backgroundColor = baseBg)
+        }
         >
           😊 Thank you, that helped
         </button>
@@ -873,13 +872,13 @@ export function StandardUI({
         <button
           onClick={onNegative}
           className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
-          style={baseStyle}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = hoverBg)
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = baseBg)
-          }
+           style={baseStyle}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.backgroundColor = hoverBg)
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.backgroundColor = baseBg)
+        }
         >
           ❓No I have more question
         </button>
@@ -893,19 +892,12 @@ export function StandardUI({
     }
     setShowQuickReview(false);
     // const messageText = message.trim();
-    const messageText = message.replace(/\n/g, "  \n").trim();
-
+const messageText = message.replace(/\n/g, "  \n").trim();
     if (!messageText.trim()) return;
 
     resetInactivityTimer();
 
     setMessage("");
-    requestAnimationFrame(() => {
-      if (textareaRef.current) {
-        textareaRef.current.style.height = "auto";
-        textareaRef.current.style.overflowY = "hidden";
-      }
-    });
 
     // Add user's message immediately to UI
     //addUserMessage(messageText);
@@ -926,7 +918,7 @@ export function StandardUI({
       //addBotMessage(askMsg);
       await saveBotMessage(askMsg, senderId, apiKey,);
       await saveBotMessage(askMsg2, senderId, apiKey,);
-      return;
+      return; 
     }
 
     // Guest just gave info → save contact & thank
@@ -1004,8 +996,8 @@ export function StandardUI({
       const file = e.detail as File;
       handleFileUpload(file);
     };
-    window.addEventListener("hertzora-file-selected", handleFile);
-    return () => window.removeEventListener("hertzora-file-selected", handleFile);
+    window.addEventListener("hostie-file-selected", handleFile);
+    return () => window.removeEventListener("hostie-file-selected", handleFile);
   }, [roomName, senderId]);
 
 
@@ -1085,7 +1077,7 @@ export function StandardUI({
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const shadowRoot = document.querySelector("#hertzora-chat-root")?.shadowRoot;
+  const shadowRoot = document.querySelector("#hostie-chat-root")?.shadowRoot;
 
   const handleReviewSubmit = async () => {
     const contactId = sessionStorage.getItem("guestContactId");
@@ -1187,7 +1179,7 @@ export function StandardUI({
     onSelect: (q: string) => void;
   }) => {
     const isDark = document
-      .querySelector("#hertzora-chat-root")
+      .querySelector("#hostie-chat-root")
       ?.classList.contains("dark");
 
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -1242,8 +1234,8 @@ export function StandardUI({
           question,
           senderId,
         );
-
-        setTimeout(() => {
+        
+          setTimeout(() => {
           setShowQuickReview(true);
         }, 3000);
 
@@ -1278,7 +1270,7 @@ export function StandardUI({
   //   }) => {
   //     if (!guestId) return;
   //  const isDark = document
-  //       .querySelector("#hertzora-chat-root")
+  //       .querySelector("#hostie-chat-root")
   //       ?.classList.contains("dark");
 
   //     return (
@@ -1355,7 +1347,7 @@ export function StandardUI({
     setShowSuggestedOnce(false);
 
     const isDark = document
-      .querySelector("#hertzora-chat-root")
+      .querySelector("#hostie-chat-root")
       ?.classList.contains("dark");
 
     const [hovered, setHovered] = useState<string | null>(null);
@@ -1538,7 +1530,7 @@ export function StandardUI({
 
       <style>{`
   @media (max-width: 480px) {
-   #hertzora-chat-box {
+   #hostie-chat-box {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -1550,96 +1542,96 @@ export function StandardUI({
     max-height: none !important;
   }
 }
-     .hertzora-color {
+     .hostie-color {
    color: "#fff" !important;
    
 
       `}</style>
       <style>{`
-  .hertzora-background {
+  .hostie-background {
     background: ${gradient};
     border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.3s;
   }
-  .dark .hertzora-background {
+  .dark .hostie-background {
     background: ${darkGradient};
     border-color: ${darkBorderColor || "#50484cff"};
   }
 
-   .hertzora-hello-text {
+   .hostie-hello-text {
     color: ${borderColor};
     opacity: 0.85;
     transition: border-color 0.3s;
 
   }
-  .dark .hertzora-hello-text {
+  .dark .hostie-hello-text {
     color: ${borderColor};
     opacity: 1;
     
   }
-    #hertzora-chat-box{
+    #hostie-chat-box{
      background: ${backgroundColor};
     }
-      .dark #hertzora-chat-box{
+      .dark #hostie-chat-box{
      background: #171717;
     }
 
     
       
      /*
-     #hertzora-chat-box textarea{
+     #hostie-chat-box textarea{
      background: ${backgroundColor};
       border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.3s;
     }
-      .dark #hertzora-chat-box textarea{
+      .dark #hostie-chat-box textarea{
      background: #171717;
       border-color: ${darkBorderColor || "#50484cff"};
     }
-        #hertzora-chat-box .btnBorder{
+        #hostie-chat-box .btnBorder{
      background: ${backgroundColor};
       border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.3s;
     }
-      .dark #hertzora-chat-box .btnBorder{
+      .dark #hostie-chat-box .btnBorder{
      background: #171717;
       border-color: ${darkBorderColor || "#50484cff"};
     }*/
       
 `}</style>
       <style>{`
-  #hertzora-chat-box textarea {
+  #hostie-chat-box textarea {
     background: ${backgroundColor};
     border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
-  #hertzora-chat-box textarea:focus,
-  #hertzora-chat-box textarea:focus-visible {
+  #hostie-chat-box textarea:focus,
+  #hostie-chat-box textarea:focus-visible {
     border-color: ${focusBorderColor};
     box-shadow: 0 0 0 0.5px ${focusBorderColor};
     outline: none;
   }
 
-  .dark #hertzora-chat-box textarea {
+  .dark #hostie-chat-box textarea {
     background: #171717;
     border-color: ${darkBorderColor || "#50484cff"};
   }
 
-  .dark #hertzora-chat-box textarea:focus,
-  .dark #hertzora-chat-box textarea:focus-visible {
+  .dark #hostie-chat-box textarea:focus,
+  .dark #hostie-chat-box textarea:focus-visible {
     border-color: ${darkFocusBorderColor};
     box-shadow: 0 0 0 0.5px ${darkFocusBorderColor};
     outline: none;
   }
 
-  #hertzora-chat-box .btnBorder {
+  #hostie-chat-box .btnBorder {
     background: ${backgroundColor};
     border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.25s ease;
   }
 
-  .dark #hertzora-chat-box .btnBorder {
+  .dark #hostie-chat-box .btnBorder {
     background: #171717;
     border-color: ${darkBorderColor || "#50484cff"};
   }
@@ -1649,7 +1641,7 @@ export function StandardUI({
         }`}>
         {/* <div className="fixed bottom-6 right-6 z-50 " > */}
         <div
-          id="hertzora-chat-box"
+          id="hostie-chat-box"
           className="flex flex-col w-[340px] h-[85vh] rounded-2xl shadow-xl border border-zinc-100 dark:border-neutral-800  overflow-hidden  transition-colors duration-300 "
         >
 
@@ -1658,13 +1650,13 @@ export function StandardUI({
               {/* <BotMessageSquare className="mr-1.5" />*/}
 
               {assignedAgent ? (
-                <div className="h-6 w-6 rounded-full hertzora-background hertzora-color text-white flex items-center justify-center text-xs font-semibold p-3">
+                <div className="h-6 w-6 rounded-full hostie-background hostie-color text-white flex items-center justify-center text-xs font-semibold p-3">
                   {getInitials(assignedAgent.name)}
                 </div>
               ) :
                 botIcon ? (
                   <div
-                    className="hertzora-background hertzora-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
+                    className="hostie-background hostie-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
                     <img
                       src={botIcon}
                       alt="Bot"
@@ -1684,7 +1676,7 @@ export function StandardUI({
 
             </div>
             <div className="flex gap-1 z-[99999]">
-              {botName !== "HertZora" && botName !== "hertZora" && (
+              {botName !== "Hostie" && (
                 <div className="relative">
                   <button
                     onClick={() => setShowPremiumPopup((prev) => !prev)}
@@ -1704,7 +1696,7 @@ export function StandardUI({
                     </div>
                   )}</div>
               )}
-              <div className="hertzora-background hertzora-color flex items-center px-2 py-0.5 rounded-md gap-1 ">
+              <div className="hostie-background hostie-color flex items-center px-2 py-0.5 rounded-md gap-1 ">
                 <Sparkles size="12" className="text-zinc-600 dark:text-zinc-200" /> AI
               </div>
               <div className="flex items-center px-2 py-0.5 rounded-md">
@@ -1724,9 +1716,9 @@ export function StandardUI({
                 <img
                   src={botIcon}
                   alt="Bot Icon"
-                  className="hertzora-color hertzora-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
+                  className="hostie-color hostie-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
-                <div className="flex items-center text-lg justify-center font-bold hertzora-hello-text">
+                <div className="flex items-center text-lg justify-center font-bold hostie-hello-text">
                   {greeting}
                 </div>
                 <div className="mt-2 font-semibold text-gray-500 dark:text-gray-400 text-lg">
@@ -1751,7 +1743,7 @@ export function StandardUI({
                     <img
                       src={botIcon}
                       alt="Bot"
-                      className="hertzora-color hertzora-background h-[31px] w-[31px] rounded-full object-cover p-1 text-white" />
+                      className="hostie-color hostie-background h-[31px] w-[31px] rounded-full object-cover p-1 text-white" />
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
                   </div>
                 )}
@@ -1785,7 +1777,7 @@ export function StandardUI({
                 </style>
                 <div
                   className={` chat-bubble px-2 py-1.5 rounded-xl max-w-[75%] text-sm shadow-sm break-words  ${msg.sender === "user"
-                    ? "hertzora-color hertzora-background text-white text-white rounded-br-none relative"
+                    ? "hostie-color hostie-background text-white text-white rounded-br-none relative"
                     : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
                     }`}
 
@@ -1923,7 +1915,7 @@ export function StandardUI({
                 </div>
                 {msg.sender === "user" && (
                   <div className="flex-shrink-0 relative">
-                    <div className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
+                    <div className="hostie-color hostie-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
                       <UserRound size="18" className="uIcon text-gray-200" />
                     </div>
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
@@ -2034,9 +2026,10 @@ export function StandardUI({
                 </button>
 
               )}
-              {/* <input
+            { /* <input
                 type="text"
                 value={message}
+                // onChange={(e) => setMessage(e.target.value)}
                 onChange={(e) => {
                   setMessage(e.target.value);
                   if (showQuickReview) {
@@ -2058,11 +2051,10 @@ export function StandardUI({
                 onBlur={(e) => {
                   e.currentTarget.style.borderColor = "";
                 }}
-              /> */}
-              <textarea
-                value={message}
-                ref={textareaRef}
-                onChange={(e) => {
+              />*/}
+                 <textarea
+              value={message}
+               onChange={(e) => {
                   setMessage(e.target.value);
                   if (showQuickReview) {
                     setShowQuickReview(false);
@@ -2070,27 +2062,27 @@ export function StandardUI({
                   setLastActivity(Date.now());
                   resetInactivityTimer();
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                  }
-                }}
-                rows={1}
-                onInput={(e) => {
-                  const el = e.currentTarget;
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
+                }
+              }}
+              rows={1}
+              onInput={(e) => {
+                const el = e.currentTarget;
 
-                  el.style.height = "auto";
+                el.style.height = "auto";
 
-                  const maxHeight = 72; // 3 rows
-                  const newHeight = Math.min(el.scrollHeight, maxHeight);
+                const maxHeight = 72; // 3 rows
+                const newHeight = Math.min(el.scrollHeight, maxHeight);
 
-                  el.style.height = newHeight + "px";
-                  el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
-                }}
-                placeholder="Type a message..."
-                className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder resize-none"
-                onFocus={(e) => {
+                el.style.height = newHeight + "px";
+                el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
+              }}
+              placeholder="Type a message..."
+              className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder resize-none"
+              onFocus={(e) => {
                   e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
                   if (document.body.classList.contains("dark")) {
                     e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
@@ -2098,12 +2090,9 @@ export function StandardUI({
                 }}
                 onBlur={(e) => {
                   e.currentTarget.style.borderColor = "";
-                  if (textareaRef.current && !message) {
-                    textareaRef.current.style.height = "auto";
-                  }
                 }}
+            />
 
-              />
 
               <style>{`
                 .send-button {
@@ -2124,7 +2113,7 @@ export function StandardUI({
                 }
               `}</style>
               {/* #7e23a8ff */}
-              <button onClick={sendMessage} className="send-button hertzora-background">
+              <button onClick={sendMessage} className="send-button hostie-background">
                 <SendHorizontal />
               </button>
 
@@ -2136,17 +2125,10 @@ export function StandardUI({
           <div className="flex items-center pt-2 justify-center font-medium text-center pb-3 text-sm text-zinc-400 dark:text-zinc-400">
             Powered by{" "}
 
-            {/* <BecomepartnerCard/ > */}
-
             <div className="relative group inline-block">
 
               {/* Trigger */}
               <div className="flex items-center gap-1 hover:text-black dark:hover:text-white cursor-pointer">
-                {/* <div className="text-sm font-bold bg-gradient-to-r from-pink-600 via-pink-400 to-blue-600 bg-clip-text text-transparent">
-                  &nbsp;hertzora
-                </div> */}
-
-                {/* Inline CSS for this page only */}
                 <style>
                   {`
           .gradient-text {
@@ -2158,9 +2140,9 @@ export function StandardUI({
                 </style>
 
                 {/* Use the class */}
-                <a href="https://app.hertzora.ai/">
+                <a href="https://app.hostingate.com/">
                   <div className="gradient-text font-bold text-sm">
-                    &nbsp;hertzora
+                    &nbsp;Hostie
                   </div>
                 </a>
 
