@@ -386,9 +386,9 @@ export function StandardUI({
     setAiPaused(false);
     sessionStorage.removeItem("aiPaused");
     setShowSuggestedOnce(false);
-setShowQuickAssigneeReview(false);
-setShowQuickReview(false)
-setShowDownloadPDF(false)
+    setShowQuickAssigneeReview(false);
+    setShowQuickReview(false)
+    setShowDownloadPDF(false)
     // create new room id
     const newRoom = crypto.randomUUID();
     setRoomName(newRoom);
@@ -396,7 +396,7 @@ setShowDownloadPDF(false)
     sessionStorage.setItem("room", newRoom);
 
     setIsGuest(true);
-    
+
 
     let endStatement = endReason || "Your previous chat has ended due to inactivity. How can I assist you now?";
     addBotMessage(endStatement);
@@ -431,8 +431,8 @@ setShowDownloadPDF(false)
     setAiPaused(false);
     sessionStorage.removeItem("aiPaused");
     setShowSuggestedOnce(false);
-setShowQuickAssigneeReview(false);
- setShowDownloadPDF(false);
+    setShowQuickAssigneeReview(false);
+    setShowDownloadPDF(false);
     // create new room id
     const newRoom = crypto.randomUUID();
     setRoomName(newRoom);
@@ -441,7 +441,7 @@ setShowQuickAssigneeReview(false);
 
     setIsGuest(true);
     setShowQuickReview(false)
-   
+
     let endStatement = endReason || "";
     if (endStatement)
       addBotMessage(endStatement);
@@ -840,18 +840,18 @@ setShowQuickAssigneeReview(false);
       .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
 
-      const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+    const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
     const hoverBg = darkenColor(baseBg, 12);
 
-      const baseStyle = {
-    backgroundColor: baseBg,
-    borderColor: suggestQuestionsBorder,
-    color: "#333",
-  };
+    const baseStyle = {
+      backgroundColor: baseBg,
+      borderColor: suggestQuestionsBorder,
+      color: "#333",
+    };
 
-  const hoverStyle = {
-    backgroundColor: hoverBg,
-  };
+    const hoverStyle = {
+      backgroundColor: hoverBg,
+    };
 
     return (
       <div className="flex flex-col items-end gap-2 mt-3">
@@ -859,12 +859,12 @@ setShowQuickAssigneeReview(false);
           onClick={onPositive}
           className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
           style={baseStyle}
-        onMouseEnter={(e) =>
-          (e.currentTarget.style.backgroundColor = hoverBg)
-        }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.backgroundColor = baseBg)
-        }
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = hoverBg)
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = baseBg)
+          }
         >
           😊 Thank you, that helped
         </button>
@@ -872,13 +872,13 @@ setShowQuickAssigneeReview(false);
         <button
           onClick={onNegative}
           className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
-           style={baseStyle}
-        onMouseEnter={(e) =>
-          (e.currentTarget.style.backgroundColor = hoverBg)
-        }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.backgroundColor = baseBg)
-        }
+          style={baseStyle}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = hoverBg)
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = baseBg)
+          }
         >
           ❓No I have more question
         </button>
@@ -892,7 +892,7 @@ setShowQuickAssigneeReview(false);
     }
     setShowQuickReview(false);
     // const messageText = message.trim();
-const messageText = message.replace(/\n/g, "  \n").trim();
+    const messageText = message.replace(/\n/g, "  \n").trim();
     if (!messageText.trim()) return;
 
     resetInactivityTimer();
@@ -918,7 +918,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
       //addBotMessage(askMsg);
       await saveBotMessage(askMsg, senderId, apiKey,);
       await saveBotMessage(askMsg2, senderId, apiKey,);
-      return; 
+      return;
     }
 
     // Guest just gave info → save contact & thank
@@ -1234,8 +1234,8 @@ const messageText = message.replace(/\n/g, "  \n").trim();
           question,
           senderId,
         );
-        
-          setTimeout(() => {
+
+        setTimeout(() => {
           setShowQuickReview(true);
         }, 3000);
 
@@ -1250,9 +1250,12 @@ const messageText = message.replace(/\n/g, "  \n").trim();
     }
   };
 
-  const suggestQuestionsBg = backgroundColor ? darkenColor(backgroundColor, 40) : "#c7bec2ff";
-  const suggestQuestionsBorder = backgroundColor ? darkenColor(backgroundColor, 45) : "#747071ff";
-  const suggestQuestionsDark = backgroundColor ? darkenColor(backgroundColor, 50) : "#7c797aff";
+  // const suggestQuestionsBg = backgroundColor ? darkenColor(backgroundColor, 40) : "#c7bec2ff";
+  // const suggestQuestionsBorder = backgroundColor ? darkenColor(backgroundColor, 45) : "#747071ff";
+  // const suggestQuestionsDark = backgroundColor ? darkenColor(backgroundColor, 50) : "#7c797aff";
+  const suggestQuestionsBg = "#c7bec2ff";
+  const suggestQuestionsBorder = "#747071ff";
+  const suggestQuestionsDark = "#7c797aff";
 
   const DEFAULT_REVIEWS: Record<
     "positive" | "neutral" | "negative",
@@ -2026,7 +2029,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                 </button>
 
               )}
-            { /* <input
+              { /* <input
                 type="text"
                 value={message}
                 // onChange={(e) => setMessage(e.target.value)}
@@ -2052,9 +2055,9 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                   e.currentTarget.style.borderColor = "";
                 }}
               />*/}
-                 <textarea
-              value={message}
-               onChange={(e) => {
+              <textarea
+                value={message}
+                onChange={(e) => {
                   setMessage(e.target.value);
                   if (showQuickReview) {
                     setShowQuickReview(false);
@@ -2062,27 +2065,27 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                   setLastActivity(Date.now());
                   resetInactivityTimer();
                 }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                }
-              }}
-              rows={1}
-              onInput={(e) => {
-                const el = e.currentTarget;
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
+                rows={1}
+                onInput={(e) => {
+                  const el = e.currentTarget;
 
-                el.style.height = "auto";
+                  el.style.height = "auto";
 
-                const maxHeight = 72; // 3 rows
-                const newHeight = Math.min(el.scrollHeight, maxHeight);
+                  const maxHeight = 72; // 3 rows
+                  const newHeight = Math.min(el.scrollHeight, maxHeight);
 
-                el.style.height = newHeight + "px";
-                el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
-              }}
-              placeholder="Type a message..."
-              className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder resize-none"
-              onFocus={(e) => {
+                  el.style.height = newHeight + "px";
+                  el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
+                }}
+                placeholder="Type a message..."
+                className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder resize-none"
+                onFocus={(e) => {
                   e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
                   if (document.body.classList.contains("dark")) {
                     e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
@@ -2091,7 +2094,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                 onBlur={(e) => {
                   e.currentTarget.style.borderColor = "";
                 }}
-            />
+              />
 
 
               <style>{`
