@@ -2081,7 +2081,7 @@ export function StandardUI({
                 el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
               }}
               placeholder="Type a message..."
-              className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder"
+              className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder resize-none"
               onFocus={(e) => {
                   e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
                   if (document.body.classList.contains("dark")) {
