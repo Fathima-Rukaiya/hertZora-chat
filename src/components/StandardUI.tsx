@@ -209,20 +209,20 @@ export function StandardUI({
       }
     }
 
-    function drawPoweredByHostie(doc: any, startY: number) {
+    function drawPoweredByhertzora(doc: any, startY: number) {
       const pageWidth = doc.internal.pageSize.getWidth();
       const y = startY + 10;
 
       const poweredBy = "Powered by";
-      const hostie = "Hostie";
+      const hertzora = "hertzora";
       const gap = 1;
 
       doc.setFont("Inter", "bold");
       doc.setFontSize(12);
 
       const poweredByWidth = doc.getTextWidth(poweredBy);
-      const hostieWidth = doc.getTextWidth(hostie);
-      const totalWidth = poweredByWidth + gap + hostieWidth;
+      const hertzoraWidth = doc.getTextWidth(hertzora);
+      const totalWidth = poweredByWidth + gap + hertzoraWidth;
 
       const startX = (pageWidth - totalWidth) / 2;
 
@@ -230,10 +230,10 @@ export function StandardUI({
       doc.setTextColor(140, 140, 140);
       doc.text(poweredBy, startX, y);
 
-      // Hostie (gradient text ONLY)
+      // hertzora (gradient text ONLY)
       drawGradientText(
         doc,
-        hostie,
+        hertzora,
         startX + poweredByWidth + gap,
         y,
         12
@@ -338,7 +338,7 @@ export function StandardUI({
     doc.setLineWidth(0.4);
     doc.line(tableXStart, lineY, tableXEnd, lineY); // horizontal line matching table width
 
-    drawPoweredByHostie(doc, tableEndY);
+    drawPoweredByhertzora(doc, tableEndY);
 
     doc.save("chat-transcript.pdf");
   };
@@ -489,7 +489,7 @@ setShowQuickAssigneeReview(false);
   //
   //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
   const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
-  //const API_BASE_URL = "https://app.hostie.ai/api/clientCustomerChatBox";
+  //const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
 
   // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
   useEffect(() => {
@@ -782,7 +782,7 @@ setShowQuickAssigneeReview(false);
       body: JSON.stringify({ room_id: roomName, message: text, receiver_id: receiverId }),
     });
   };
-  //C:\Users\User\Desktop\amez\hostie-dashboard\src\app\api\clientCustomerChatBox\aiResponceGenerate
+  //C:\Users\User\Desktop\amez\hertzora-dashboard\src\app\api\clientCustomerChatBox\aiResponceGenerate
   const generateAIResponse = async (room_id: string, message: string, sender_id: string) => {
     const typingMessage: ChatMessage = { sender: "bot", text: "", isTyping: true };
     setChatHistory(prev => [...prev, typingMessage]);
@@ -837,7 +837,7 @@ setShowQuickAssigneeReview(false);
     onNegative: () => void;
   }) => {
     const isDark = document
-      .querySelector("#hostie-chat-root")
+      .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
 
       const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
@@ -996,8 +996,8 @@ const messageText = message.replace(/\n/g, "  \n").trim();
       const file = e.detail as File;
       handleFileUpload(file);
     };
-    window.addEventListener("hostie-file-selected", handleFile);
-    return () => window.removeEventListener("hostie-file-selected", handleFile);
+    window.addEventListener("hertzora-file-selected", handleFile);
+    return () => window.removeEventListener("hertzora-file-selected", handleFile);
   }, [roomName, senderId]);
 
 
@@ -1077,7 +1077,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const shadowRoot = document.querySelector("#hostie-chat-root")?.shadowRoot;
+  const shadowRoot = document.querySelector("#hertzora-chat-root")?.shadowRoot;
 
   const handleReviewSubmit = async () => {
     const contactId = sessionStorage.getItem("guestContactId");
@@ -1179,7 +1179,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
     onSelect: (q: string) => void;
   }) => {
     const isDark = document
-      .querySelector("#hostie-chat-root")
+      .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
 
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -1270,7 +1270,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
   //   }) => {
   //     if (!guestId) return;
   //  const isDark = document
-  //       .querySelector("#hostie-chat-root")
+  //       .querySelector("#hertzora-chat-root")
   //       ?.classList.contains("dark");
 
   //     return (
@@ -1347,7 +1347,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
     setShowSuggestedOnce(false);
 
     const isDark = document
-      .querySelector("#hostie-chat-root")
+      .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
 
     const [hovered, setHovered] = useState<string | null>(null);
@@ -1530,7 +1530,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
 
       <style>{`
   @media (max-width: 480px) {
-   #hostie-chat-box {
+   #hertzora-chat-box {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -1542,96 +1542,96 @@ const messageText = message.replace(/\n/g, "  \n").trim();
     max-height: none !important;
   }
 }
-     .hostie-color {
+     .hertzora-color {
    color: "#fff" !important;
    
 
       `}</style>
       <style>{`
-  .hostie-background {
+  .hertzora-background {
     background: ${gradient};
     border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.3s;
   }
-  .dark .hostie-background {
+  .dark .hertzora-background {
     background: ${darkGradient};
     border-color: ${darkBorderColor || "#50484cff"};
   }
 
-   .hostie-hello-text {
+   .hertzora-hello-text {
     color: ${borderColor};
     opacity: 0.85;
     transition: border-color 0.3s;
 
   }
-  .dark .hostie-hello-text {
+  .dark .hertzora-hello-text {
     color: ${borderColor};
     opacity: 1;
     
   }
-    #hostie-chat-box{
+    #hertzora-chat-box{
      background: ${backgroundColor};
     }
-      .dark #hostie-chat-box{
+      .dark #hertzora-chat-box{
      background: #171717;
     }
 
     
       
      /*
-     #hostie-chat-box textarea{
+     #hertzora-chat-box textarea{
      background: ${backgroundColor};
       border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.3s;
     }
-      .dark #hostie-chat-box textarea{
+      .dark #hertzora-chat-box textarea{
      background: #171717;
       border-color: ${darkBorderColor || "#50484cff"};
     }
-        #hostie-chat-box .btnBorder{
+        #hertzora-chat-box .btnBorder{
      background: ${backgroundColor};
       border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.3s;
     }
-      .dark #hostie-chat-box .btnBorder{
+      .dark #hertzora-chat-box .btnBorder{
      background: #171717;
       border-color: ${darkBorderColor || "#50484cff"};
     }*/
       
 `}</style>
       <style>{`
-  #hostie-chat-box textarea {
+  #hertzora-chat-box textarea {
     background: ${backgroundColor};
     border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
-  #hostie-chat-box textarea:focus,
-  #hostie-chat-box textarea:focus-visible {
+  #hertzora-chat-box textarea:focus,
+  #hertzora-chat-box textarea:focus-visible {
     border-color: ${focusBorderColor};
     box-shadow: 0 0 0 0.5px ${focusBorderColor};
     outline: none;
   }
 
-  .dark #hostie-chat-box textarea {
+  .dark #hertzora-chat-box textarea {
     background: #171717;
     border-color: ${darkBorderColor || "#50484cff"};
   }
 
-  .dark #hostie-chat-box textarea:focus,
-  .dark #hostie-chat-box textarea:focus-visible {
+  .dark #hertzora-chat-box textarea:focus,
+  .dark #hertzora-chat-box textarea:focus-visible {
     border-color: ${darkFocusBorderColor};
     box-shadow: 0 0 0 0.5px ${darkFocusBorderColor};
     outline: none;
   }
 
-  #hostie-chat-box .btnBorder {
+  #hertzora-chat-box .btnBorder {
     background: ${backgroundColor};
     border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.25s ease;
   }
 
-  .dark #hostie-chat-box .btnBorder {
+  .dark #hertzora-chat-box .btnBorder {
     background: #171717;
     border-color: ${darkBorderColor || "#50484cff"};
   }
@@ -1641,7 +1641,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
         }`}>
         {/* <div className="fixed bottom-6 right-6 z-50 " > */}
         <div
-          id="hostie-chat-box"
+          id="hertzora-chat-box"
           className="flex flex-col w-[340px] h-[85vh] rounded-2xl shadow-xl border border-zinc-100 dark:border-neutral-800  overflow-hidden  transition-colors duration-300 "
         >
 
@@ -1650,13 +1650,13 @@ const messageText = message.replace(/\n/g, "  \n").trim();
               {/* <BotMessageSquare className="mr-1.5" />*/}
 
               {assignedAgent ? (
-                <div className="h-6 w-6 rounded-full hostie-background hostie-color text-white flex items-center justify-center text-xs font-semibold p-3">
+                <div className="h-6 w-6 rounded-full hertzora-background hertzora-color text-white flex items-center justify-center text-xs font-semibold p-3">
                   {getInitials(assignedAgent.name)}
                 </div>
               ) :
                 botIcon ? (
                   <div
-                    className="hostie-background hostie-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
+                    className="hertzora-background hertzora-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
                     <img
                       src={botIcon}
                       alt="Bot"
@@ -1676,7 +1676,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
 
             </div>
             <div className="flex gap-1 z-[99999]">
-              {botName !== "Hostie" && (
+              {botName !== "hertzora" && (
                 <div className="relative">
                   <button
                     onClick={() => setShowPremiumPopup((prev) => !prev)}
@@ -1696,7 +1696,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                     </div>
                   )}</div>
               )}
-              <div className="hostie-background hostie-color flex items-center px-2 py-0.5 rounded-md gap-1 ">
+              <div className="hertzora-background hertzora-color flex items-center px-2 py-0.5 rounded-md gap-1 ">
                 <Sparkles size="12" className="text-zinc-600 dark:text-zinc-200" /> AI
               </div>
               <div className="flex items-center px-2 py-0.5 rounded-md">
@@ -1716,9 +1716,9 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                 <img
                   src={botIcon}
                   alt="Bot Icon"
-                  className="hostie-color hostie-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
+                  className="hertzora-color hertzora-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
-                <div className="flex items-center text-lg justify-center font-bold hostie-hello-text">
+                <div className="flex items-center text-lg justify-center font-bold hertzora-hello-text">
                   {greeting}
                 </div>
                 <div className="mt-2 font-semibold text-gray-500 dark:text-gray-400 text-lg">
@@ -1743,7 +1743,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                     <img
                       src={botIcon}
                       alt="Bot"
-                      className="hostie-color hostie-background h-[31px] w-[31px] rounded-full object-cover p-1 text-white" />
+                      className="hertzora-color hertzora-background h-[31px] w-[31px] rounded-full object-cover p-1 text-white" />
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
                   </div>
                 )}
@@ -1777,7 +1777,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                 </style>
                 <div
                   className={` chat-bubble px-2 py-1.5 rounded-xl max-w-[75%] text-sm shadow-sm break-words  ${msg.sender === "user"
-                    ? "hostie-color hostie-background text-white text-white rounded-br-none relative"
+                    ? "hertzora-color hertzora-background text-white text-white rounded-br-none relative"
                     : "bg-gray-200 dark:bg-neutral-600 text-gray-800 dark:text-white rounded-bl-none relative"
                     }`}
 
@@ -1915,7 +1915,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                 </div>
                 {msg.sender === "user" && (
                   <div className="flex-shrink-0 relative">
-                    <div className="hostie-color hostie-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
+                    <div className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
                       <UserRound size="18" className="uIcon text-gray-200" />
                     </div>
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
@@ -2113,7 +2113,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                 }
               `}</style>
               {/* #7e23a8ff */}
-              <button onClick={sendMessage} className="send-button hostie-background">
+              <button onClick={sendMessage} className="send-button hertzora-background">
                 <SendHorizontal />
               </button>
 
@@ -2142,7 +2142,7 @@ const messageText = message.replace(/\n/g, "  \n").trim();
                 {/* Use the class */}
                 <a href="https://app.hostingate.com/">
                   <div className="gradient-text font-bold text-sm">
-                    &nbsp;Hostie
+                    &nbsp;hertzora
                   </div>
                 </a>
 
