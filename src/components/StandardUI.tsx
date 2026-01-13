@@ -78,6 +78,7 @@ export function StandardUI({
     const saved = sessionStorage.getItem("aiPaused");
     return saved === "true"; // restore previous state
   });
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
 
   const [userInfo, setUserInfo] = useState<{ name?: string; email?: string } | null>(null);
@@ -899,6 +900,12 @@ export function StandardUI({
     resetInactivityTimer();
 
     setMessage("");
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+        textareaRef.current.style.overflowY = "hidden";
+      }
+    });
 
     // Add user's message immediately to UI
     //addUserMessage(messageText);
@@ -2052,9 +2059,10 @@ export function StandardUI({
                   e.currentTarget.style.borderColor = "";
                 }}
               /> */}
-                <textarea
-              value={message}
-               onChange={(e) => {
+              <textarea
+                value={message}
+                ref={textareaRef}
+                onChange={(e) => {
                   setMessage(e.target.value);
                   if (showQuickReview) {
                     setShowQuickReview(false);
@@ -2062,27 +2070,27 @@ export function StandardUI({
                   setLastActivity(Date.now());
                   resetInactivityTimer();
                 }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                }
-              }}
-              rows={1}
-              onInput={(e) => {
-                const el = e.currentTarget;
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
+                rows={1}
+                onInput={(e) => {
+                  const el = e.currentTarget;
 
-                el.style.height = "auto";
+                  el.style.height = "auto";
 
-                const maxHeight = 72; // 3 rows
-                const newHeight = Math.min(el.scrollHeight, maxHeight);
+                  const maxHeight = 72; // 3 rows
+                  const newHeight = Math.min(el.scrollHeight, maxHeight);
 
-                el.style.height = newHeight + "px";
-                el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
-              }}
-              placeholder="Type a message..."
-              className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder resize-none"
-              onFocus={(e) => {
+                  el.style.height = newHeight + "px";
+                  el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
+                }}
+                placeholder="Type a message..."
+                className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder resize-none"
+                onFocus={(e) => {
                   e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
                   if (document.body.classList.contains("dark")) {
                     e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
@@ -2090,8 +2098,12 @@ export function StandardUI({
                 }}
                 onBlur={(e) => {
                   e.currentTarget.style.borderColor = "";
+                  if (textareaRef.current && !message) {
+                    textareaRef.current.style.height = "auto";
+                  }
                 }}
-            />
+
+              />
 
               <style>{`
                 .send-button {
@@ -2166,22 +2178,6 @@ export function StandardUI({
                   </span>
                 </div>
 
-              </div>
-
-              {/* Popover Above */}
-              <div
-                className="
-      absolute left-0 bottom-full mb-2   /* makes it go UP */
-      hidden group-hover:block 
-      text-xs 
-      bg-white dark:bg-neutral-900 
-      border border-gray-200 dark:border-neutral-700 
-      p-2 rounded-md shadow-md
-      z-50
-      
-    "
-              >
-                .....
               </div>
             </div>
 
