@@ -5,6 +5,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 // import ReactMarkdown from "react-markdown";
 // import remarkGfm from "remark-gfm";
 import Markdown from "markdown-to-jsx";
+// import { jsPDF } from "jspdf";
+// import autoTable from "jspdf-autotable";
+
 
 type ChatMessage = {
   sender: "user" | "bot";
@@ -61,8 +64,6 @@ export function StandardUI({
   suggestedQuestionList?: string[];
 }) {
 
-
-
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
@@ -105,11 +106,14 @@ export function StandardUI({
 
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const defaultSuggestions = suggestedQuestionList
   const [showSuggestedOnce, setShowSuggestedOnce] = useState(false);
 
+
+  const [showQuickReview, setShowQuickReview] = useState(false);
+  const [showQuickAssigneeReview, setShowQuickAssigneeReview] = useState(false);
+  const [showDownloadPDF, setShowDownloadPDF] = useState(false);
+
+  const defaultSuggestions = suggestedQuestionList
 
 
   useEffect(() => {
@@ -135,7 +139,211 @@ export function StandardUI({
     }, 4 * 60 * 1000); // 4 minutes
   };
 
-  const endChatSession = async () => {
+
+  const downloadChatPDF = async () => {
+    const { jsPDF } = await import("jspdf");
+    const autoTable = (await import("jspdf-autotable")).default;
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const now = new Date();
+    const printedDate = now.toLocaleDateString();
+    const printedTime = now.toLocaleTimeString();
+
+    // Header start
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(24); // bigger and bolder
+    doc.setTextColor(50, 50, 50); // dark gray for professionalism
+
+    function markdownToPlainText(md: string) {
+      return md
+        .replace(/!\[.*?\]\(.*?\)/g, '') // remove images
+        .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '$1 ($2)') // show links as text (URL in parentheses)
+        .replace(/(\*\*|__)(.*?)\1/g, '$2') // bold
+        .replace(/(\*|_)(.*?)\1/g, '$2')   // italic
+        .replace(/^\s*\d+\.\s+/gm, '• ')     // numbered list → bullets
+        .replace(/^\s*[-*]\s+/gm, '• ')      // bullet list
+        .trim();
+    }
+
+    function drawGradientText(
+      doc: any,
+      text: string,
+      x: number,
+      y: number,
+      fontSize = 10
+    ) {
+      const gradientColors = [
+        [124, 58, 237], // #7c3aed
+        [236, 72, 153], // #ec4899
+        [59, 130, 246], // #3b82f6
+      ];
+
+      doc.setFont("Inter", "bolditalic");
+      doc.setFontSize(fontSize);
+
+      let currentX = x;
+
+      for (let i = 0; i < text.length; i++) {
+        const ratio = i / Math.max(text.length - 1, 1);
+        const colorIndex = Math.floor(ratio * (gradientColors.length - 1));
+        const nextIndex = Math.min(colorIndex + 1, gradientColors.length - 1);
+        const localRatio = ratio * (gradientColors.length - 1) - colorIndex;
+
+        const r = Math.round(
+          gradientColors[colorIndex][0] * (1 - localRatio) +
+          gradientColors[nextIndex][0] * localRatio
+        );
+        const g = Math.round(
+          gradientColors[colorIndex][1] * (1 - localRatio) +
+          gradientColors[nextIndex][1] * localRatio
+        );
+        const b = Math.round(
+          gradientColors[colorIndex][2] * (1 - localRatio) +
+          gradientColors[nextIndex][2] * localRatio
+        );
+
+        doc.setTextColor(r, g, b);
+        doc.text(text[i], currentX, y);
+        currentX += doc.getTextWidth(text[i]);
+      }
+    }
+
+    function drawPoweredByhertzora(doc: any, startY: number) {
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const y = startY + 10;
+
+      const poweredBy = "Powered by";
+      const hertzora = "HertZora";
+      const gap = 1;
+
+      doc.setFont("Inter", "bold");
+      doc.setFontSize(12);
+
+      const poweredByWidth = doc.getTextWidth(poweredBy);
+      const hertzoraWidth = doc.getTextWidth(hertzora);
+      const totalWidth = poweredByWidth + gap + hertzoraWidth;
+
+      const startX = (pageWidth - totalWidth) / 2;
+
+      // Powered by (normal text)
+      doc.setTextColor(140, 140, 140);
+      doc.text(poweredBy, startX, y);
+
+      // hertzora (gradient text ONLY)
+      drawGradientText(
+        doc,
+        hertzora,
+        startX + poweredByWidth + gap,
+        y,
+        12
+      );
+      doc.setFont("Inter", "bolditalic");
+      doc.setTextColor(140, 140, 140);
+      doc.setFontSize(12);
+      doc.text("AI", startX + poweredByWidth + gap + 12, y);
+    }
+
+    // --- 1️⃣ Fetch bot icon as base64 ---
+    async function getImageBase64(url: string): Promise<string> {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    const pageCenter = pageWidth / 2;
+    const botIconUrl = botIcon; // your URL
+    const botNamex = botName; // your bot name
+    const imgData = await getImageBase64(botIconUrl);
+
+    // --- 2️⃣ Draw bot icon with optional background ---
+    const circleX = 20;
+    const circleY = 14;
+    const radius = 8;
+
+    // Optional colored background
+    doc.setFillColor(58, 43, 155); // purple
+    doc.circle(pageCenter, circleY, radius, "F"); // centered circle
+
+    // Add the image
+    const size = 12; //12
+    doc.addImage(
+      imgData,
+      "PNG",
+      pageCenter - size / 2,
+      circleY - size / 2,
+      size,
+      size
+    );
+
+    // Bot name smaller
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(12); // smaller than before
+    doc.setTextColor(30, 30, 30);
+    doc.text(botNamex, pageCenter, circleY + radius + 4, { align: "center" });
+
+    // Main heading bigger
+    doc.setFont("Inter", "bold");
+    doc.setFontSize(26); // bigger
+    doc.setTextColor(50, 50, 50);
+    doc.text("Conversation Summary", pageWidth / 2, circleY + radius + 15, { align: "center" });
+
+
+    // Optional underline for style
+    doc.setDrawColor(180, 180, 180); // light gray
+    doc.setLineWidth(0.5);
+    doc.line(15, 42, pageWidth - 15, 42);
+
+    // Printed date below heading
+    doc.setFont("Inter", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(120); // subtle gray
+    doc.text(`Generated on ${printedDate} at ${printedTime}`, pageWidth / 2, 48, { align: "center" });
+
+    const headingBottomY = 54;
+    autoTable(doc, {
+      startY: headingBottomY,
+      head: [["#", "Sender", "Message", "Time"]],
+      body: chatHistory.map((msg, index) => [
+        index + 1,
+        msg.sender === "user" ? "User" : "Assistant",
+        markdownToPlainText(msg.text || ""),
+        msg.timestamps?.sent || msg.timestamps?.received || "-",
+      ]),
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+        valign: "top",
+        font: "Inter",
+        overflow: "ellipsize", // optional, trims long text with "…"
+      },
+      columnStyles: {
+        2: { cellWidth: 120, overflow: 'linebreak' },
+        3: { cellWidth: 30 } // column 3 = "Time" → set fixed width
+      }
+    });
+
+    const tableXStart = 14; // usually autoTable default margin left
+    const tableXEnd = pageWidth - 14; // or calculate actual table width if smaller
+
+    const tableEndY = (doc as any).lastAutoTable.finalY; // bottom of table
+    const lineY = tableEndY + 4; // some padding below table
+
+    doc.setDrawColor(200);   // light gray
+    doc.setLineWidth(0.4);
+    doc.line(tableXStart, lineY, tableXEnd, lineY); // horizontal line matching table width
+
+    drawPoweredByhertzora(doc, tableEndY);
+
+    doc.save("chat-transcript.pdf");
+  };
+
+  const endChatSession = async (endReason?: string) => {
     clearTimeout(inactivityTimer.current);
     clearTimeout(popupTimer.current);
 
@@ -165,6 +373,51 @@ export function StandardUI({
     // remove session
     sessionStorage.removeItem("guestContactId");
     sessionStorage.removeItem("room");
+    setShowDownloadPDF(false);
+    setShowEndPopup(false);
+    setChatHistory([]);
+    setGuestId("");
+    setSenderId(null);
+    setRoomName(null);
+    setIsGuest(true);
+    setUserInfo(null);
+    setAskedForInfo(false);
+    // reset AI pause state
+    setAiPaused(false);
+    sessionStorage.removeItem("aiPaused");
+    setShowSuggestedOnce(false);
+    setShowQuickAssigneeReview(false);
+    setShowQuickReview(false)
+    setShowDownloadPDF(false)
+    // create new room id
+    const newRoom = crypto.randomUUID();
+    setRoomName(newRoom);
+
+    sessionStorage.setItem("room", newRoom);
+
+    setIsGuest(true);
+
+
+    let endStatement = endReason || "Your previous chat has ended due to inactivity. How can I assist you now?";
+    addBotMessage(endStatement);
+    console.log("roomName", roomName, "senderid", senderId)
+
+  };
+
+
+
+  const endChatSessionByQuickReview = async (endReason?: string) => {
+    clearTimeout(inactivityTimer.current);
+    clearTimeout(popupTimer.current);
+
+    inactivityTimer.current = null;
+    popupTimer.current = null;
+
+
+    // setShowReviewPopup(true);
+    // remove session
+    sessionStorage.removeItem("guestContactId");
+    sessionStorage.removeItem("room");
 
     setShowEndPopup(false);
     setChatHistory([]);
@@ -177,8 +430,9 @@ export function StandardUI({
     // reset AI pause state
     setAiPaused(false);
     sessionStorage.removeItem("aiPaused");
-
-
+    setShowSuggestedOnce(false);
+    setShowQuickAssigneeReview(false);
+    setShowDownloadPDF(false);
     // create new room id
     const newRoom = crypto.randomUUID();
     setRoomName(newRoom);
@@ -186,12 +440,15 @@ export function StandardUI({
     sessionStorage.setItem("room", newRoom);
 
     setIsGuest(true);
+    setShowQuickReview(false)
 
-    addBotMessage("Your previous chat has ended due to inactivity. How can I assist you now?");
+    let endStatement = endReason || "";
+    if (endStatement)
+      addBotMessage(endStatement);
+
     console.log("roomName", roomName, "senderid", senderId)
 
   };
-
 
 
   useEffect(() => {
@@ -206,16 +463,6 @@ export function StandardUI({
     }
   }, [shadowContainer?.current]);
 
-  // const getUserCountry = async () => {
-  //   try {
-  //     const res = await fetch("https://ipapi.co/json/");
-  //     const data = await res.json();
-  //     return data.country_name || data.country || "Unknown";
-  //   } catch (err) {
-  //     console.error("Failed to get country:", err);
-  //     return "Unknown";
-  //   }
-  // };
 
   const getUserCountry = async () => {
     try {
@@ -233,43 +480,18 @@ export function StandardUI({
   };
 
 
-  //   const getUserCountry = async () => {
-  //   try {
-  //     const controller = new AbortController();
-
-  //     // Timeout (optional but safe)
-  //     const timeout = setTimeout(() => controller.abort(), 3000);
-
-  //     const res = await fetch("https://ipapi.co/json/", {
-  //       signal: controller.signal,
-  //     });
-
-  //     clearTimeout(timeout);
-
-  //     if (!res.ok) return "Unknown";
-
-  //     const data = await res.json();
-
-  //     return data?.country_name || data?.country || "Unknown";
-  //   } catch (err) {
-  //     console.warn("Country fetch failed (safe):", err.message);
-  //     return "Unknown"; // <--- Fallback always
-  //   }
-  // };
-
-
-
   const [country, setCountry] = useState("Unknown");
 
   useEffect(() => {
     getUserCountry().then((c) => setCountry(c));
   }, []);
 
-  //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
   const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
-  //const API_BASE_URL = "https://app.hostie.ai/api/clientCustomerChatBox";
-  // https://app.hertzora.ai/hostie/overview
-  // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";  
+  //https://hostingate-client.vercel.app/sign-in https://app.hostingate.com/dashboard/profile
+  // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
+  //const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
+
+  // const API_BASE_URL = "http://localhost:3000/api/clientCustomerChatBox";
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
@@ -292,14 +514,37 @@ export function StandardUI({
           const res = await fetch(`${API_BASE_URL}/getGuestRoom?guest_id=${guestContactId}`, {
             headers: { "x-api-key": apiKey },
           })
+          if (!res.ok) {
+            // If fetch fails (404, 410, etc.), treat as ended/deleted
+            console.warn("Guest room not found, ending session");
+            endChatSessionByQuickReview("");
+            return;
+          }
+
           const data = await res.json();
           setRoomName(data.room_id); // set room from DB
+
         } else {
           // New guest → create temporary room until they provide info
           const newRoomId = crypto.randomUUID();
           setRoomName(newRoomId);
           setIsGuest(true);
           setSenderId(null); // unknown guest until info provided
+
+
+          setChatHistory([]);
+
+          setSenderId(null);
+
+
+          setUserInfo(null);
+          setAskedForInfo(false);
+          // reset AI pause state
+          setAiPaused(false);
+          sessionStorage.removeItem("aiPaused");
+
+
+
         }
         console.log("roomName", roomName, "senderid", senderId)
       } catch (err) {
@@ -379,6 +624,7 @@ export function StandardUI({
         if (msgText === "You are now connected to a live agent. AI responses are paused.") {
           setAiPaused(true);
           addBotMessage(msgText);
+          setShowQuickReview(false);
 
           getAssignee()
             .then((agent) => {
@@ -398,6 +644,16 @@ export function StandardUI({
           setAiPaused(false);
           addBotMessage(msgText);
           setAssignedAgent(null);
+          setShowQuickReview(false);
+          setShowQuickAssigneeReview(true);
+          setShowSuggestedOnce(false);
+
+          // Auto-end after 30s if no action
+          // setTimeout(() => {
+          //   setShowQuickAssigneeReview(false);
+          //   endChatSessionByQuickReview("Thanks for chatting!! 😊");
+          // }, 10 * 1000);
+
           return;
         }
 
@@ -450,7 +706,7 @@ export function StandardUI({
       },
       body: JSON.stringify({
         room_id: roomName,
-        sender_id: senderId,
+
       }),
     });
     return res.json(); // { reply: "AI response" }
@@ -576,11 +832,70 @@ export function StandardUI({
     ]);
   };
 
+  const QuickReview = ({ onPositive, onNegative }: {
+    onPositive: () => void;
+    onNegative: () => void;
+  }) => {
+    const isDark = document
+      .querySelector("#hertzora-chat-root")
+      ?.classList.contains("dark");
+
+    const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+    const hoverBg = darkenColor(baseBg, 12);
+
+    const baseStyle = {
+      backgroundColor: baseBg,
+      borderColor: suggestQuestionsBorder,
+      color: "#333",
+    };
+
+    const hoverStyle = {
+      backgroundColor: hoverBg,
+    };
+
+    return (
+      <div className="flex flex-col items-end gap-2 mt-3">
+        <button
+          onClick={onPositive}
+          className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
+          style={baseStyle}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = hoverBg)
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = baseBg)
+          }
+        >
+          😊 Thank you, that helped
+        </button>
+
+        <button
+          onClick={onNegative}
+          className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
+          style={baseStyle}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = hoverBg)
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = baseBg)
+          }
+        >
+          ❓No I have more question
+        </button>
+      </div>
+    );
+  };
+
   const sendMessage = async () => {
-    const messageText = message.trim();
+    if (showSuggestedOnce) {
+      setShowSuggestedOnce(false);
+    }
+    setShowQuickReview(false);
+    // const messageText = message.trim();
+    const messageText = message.replace(/\n/g, "  \n").trim();
 
     if (!messageText.trim()) return;
-    setIsProcessing(true);
+
     resetInactivityTimer();
 
     setMessage("");
@@ -603,10 +918,8 @@ export function StandardUI({
 
       //addBotMessage(askMsg);
       await saveBotMessage(askMsg, senderId, apiKey,);
-
       await saveBotMessage(askMsg2, senderId, apiKey,);
-
-      return; // Don't save user message yet
+      return;
     }
 
     // Guest just gave info → save contact & thank
@@ -629,15 +942,14 @@ export function StandardUI({
           //  await saveUserMessage(message, true);
           await saveUserMessageWithSender(messageText, true, savedGuest.id);
 
-
           const thankMsg = `Thanks ${savedGuest.name || savedGuest.email}! You can continue chatting now..!`;
           // addBotMessage(thankMsg);
           await saveBotMessage(thankMsg, savedGuest.id, apiKey);
-          // ✅ SHOW SUGGESTIONS ONCE
           if (!showSuggestedOnce && defaultSuggestions?.length) {
             setSuggestedQuestions(defaultSuggestions);
             setShowSuggestedOnce(true);
           }
+
         } catch (err) {
           console.error("Error saving guest info:", err);
         }
@@ -664,21 +976,21 @@ export function StandardUI({
           senderId,
         );
 
+        setTimeout(() => {
+          setShowQuickReview(true);
+        }, 3000);
+
 
       } catch (err) {
         console.error("AI call failed:", err);
         setChatHistory(prev => prev.filter(msg => !msg.isTyping));
-
       }
     } else {
       console.log("AI response paused due to live agent assignment.");
-
       const aiResp = await saveUserMessage(messageText, true);
     }
 
   };
-
-
 
   useEffect(() => {
     const handleFile = (e: any) => {
@@ -769,33 +1081,21 @@ export function StandardUI({
   const shadowRoot = document.querySelector("#hertzora-chat-root")?.shadowRoot;
 
   const handleReviewSubmit = async () => {
-
-    // if (!guestId) {
-    //   endChatSession();
-    //   return;
-    // }
-    // const contactId = sessionStorage.getItem("guestContactId");
-    // const room = sessionStorage.getItem("room");
-
-    // if (!contactId || !room) {
-    //   // fallback, end chat if missing
-    //   endChatSession();
-    //   return;
-    // }
-
     const contactId = sessionStorage.getItem("guestContactId");
     const room = sessionStorage.getItem("room");
 
     if (!contactId || !room) {
       setShowReviewPopup(false);
-      endChatSession();
+      //endChatSession();
+      endChatSessionByQuickReview("Thanks for chatting!! 😊") //now ok
       return;
     }
     console.log("savedRoom:", room);
     console.log("guestId:", contactId);
     console.log("click 12333");
     if (!contactId) {
-      endChatSession();
+      //  endChatSession();
+      endChatSession("Thanks for chatting!! 😊") //now ok  endChatSessionByQuickReview("Thanks for chatting!! 😊")
       return;
     }
     console.log("click clichh")
@@ -820,7 +1120,9 @@ export function StandardUI({
     }
 
     setShowReviewPopup(false);
-    endChatSession();
+    setShowDownloadPDF(true);
+    setShowSuggestedOnce(false);
+    // endChatSessionByQuickReview("Thanks for chatting!! 😊")
   };
 
   const [showPremiumPopup, setShowPremiumPopup] = useState(false);
@@ -870,68 +1172,6 @@ export function StandardUI({
     : "#3a3538";
 
 
-  // const SuggestedQuestions = ({ questions, onSelect }: { questions: string[], onSelect: (q: string) => void }) => {
-  //   const isDark = document
-  //     .querySelector("#hertzora-chat-root")
-  //     ?.classList.contains("dark");
-
-  //   return (
-  //     <div className=" " >
-  //       {/* border rounded-lg border-t border-zinc-200 dark:border-neutral-700  */}
-  //       {/* <p className="text-center font-semibold text-sm font-medium text-black dark:text-white mt-1">You can ask me things like</p> */}
-
-  //       <div className="flex flex-col-reverse gap-2 mt-4 items-end">
-  //         <style>
-  //           {`
-  //          .hertzora-suggest-question{
-  //    background: ${suggestQuestionsBg};
-  //     border-color: ${suggestQuestionsBorder || "#50484cff"};
-  //     color: #1F2937;
-
-  //   }
-  //      .dark .hertzora-suggest-question{
-  //   color: #FFFFFF;
-  //    background: ${suggestQuestionsDark};
-  //     border-color: ${suggestQuestionsBorder || "#50484cff"};
-  //   /* opacity: 1;*/
-
-  // }
-  // .hover .hertzora-suggest-question{
-  // }`}
-  //         </style>
-  //         {/* {questions.map((q, i) => (
-  //         <button
-
-  //           key={i}
-  //           className="px-3 py-1.5 rounded-full text-sm hertzora-suggest-question"
-  //           onClick={() => onSelect(q)}
-  //         >
-  //           {q}
-  //         </button>
-  //       ))} */}
-  //       {/* px-3 py-1.5 rounded-full text-sm border transition-colors */}
-  //         {questions.map((q, i) => (
-  //           <button
-  //             key={i}
-  //             onClick={() => onSelect(q)}
-  //             className="p-2 rounded-3xl text-sm max-w-[80%] break-words"
-  //             style={{
-  //               backgroundColor: isDark
-  //                 ? suggestQuestionsDark
-  //                 : suggestQuestionsBg,
-  //               borderColor: suggestQuestionsBorder,
-  //               color: isDark ? "#ffffff" : "#1F2937",
-  //             }}
-  //           >
-  //             {q}
-  //           </button>
-  //         ))}
-
-  //       </div>
-  //     </div>
-
-  //   );
-  // };
   const SuggestedQuestions = ({
     questions,
     onSelect,
@@ -978,6 +1218,7 @@ export function StandardUI({
     );
   };
 
+
   const handleSuggestionClick = async (question: string) => {
     setShowSuggestions(false);
     setShowSuggestedOnce(false);
@@ -994,6 +1235,11 @@ export function StandardUI({
           question,
           senderId,
         );
+
+        setTimeout(() => {
+          setShowQuickReview(true);
+        }, 3000);
+
       } catch (err) {
         console.error("AI call failed:", err);
         setChatHistory(prev => prev.filter(msg => !msg.isTyping));
@@ -1008,6 +1254,181 @@ export function StandardUI({
   const suggestQuestionsBg = backgroundColor ? darkenColor(backgroundColor, 40) : "#c7bec2ff";
   const suggestQuestionsBorder = backgroundColor ? darkenColor(backgroundColor, 45) : "#747071ff";
   const suggestQuestionsDark = backgroundColor ? darkenColor(backgroundColor, 50) : "#7c797aff";
+
+  const DEFAULT_REVIEWS: Record<
+    "positive" | "neutral" | "negative",
+    string
+  > = {
+    positive: "That was helpful, thank you!",
+    neutral: "Somewhat helpful.",
+    negative: "Not what I was looking for.",
+  };
+
+  //   const QuickEmojiReview = ({
+  //     onSelect,
+  //   }: {
+  //     onSelect: (sentiment: "positive" | "neutral" | "negative") => void;
+  //   }) => {
+  //     if (!guestId) return;
+  //  const isDark = document
+  //       .querySelector("#hertzora-chat-root")
+  //       ?.classList.contains("dark");
+
+  //     return (
+  //       <>
+
+  //         {/* <div className="flex gap-3 mt-3 items-center justify-start">
+  //           <button
+  //             onClick={() => onSelect("positive")}
+  //             className="p-2 rounded-full hover:scale-110 transition"
+  //             title="Happy"
+  //           >
+  //             <Laugh size={26} color="#22c55e" />
+  //           </button>
+
+  //           <button
+  //             onClick={() => onSelect("neutral")}
+  //             className="p-2 rounded-full hover:scale-110 transition"
+  //             title="Neutral"
+  //           >
+  //             <Meh size={26} color="#6b7280" />
+  //           </button>
+
+  //           <button
+  //             onClick={() => onSelect("negative")}
+  //             className="p-2 rounded-full hover:scale-110 transition"
+  //             title="Sad"
+  //           >
+  //             <Frown size={26} color="#ef4444" />
+  //           </button>
+
+  //           <span className="text-xs opacity-60 ml-2">
+  //             Rate this chat
+  //           </span>
+  //         </div> */}
+
+  //         <button
+  //           onClick={() => onSelect("positive")}
+  //           className="p-2 rounded-3xl text-sm border max-w-[80%]"
+  //            style={{
+  //                   backgroundColor: isHovered
+  //                     ? isDark
+  //                       ? suggestQuestionsDark
+  //                       : suggestQuestionsBg
+  //                     : "transparent",
+
+  //                   borderColor: suggestQuestionsBorder || "#50484cff",
+  //                   color: isDark ? "#ffffff" : "#1F2937",
+  //                 }}
+  //         >
+  //            <Laugh size={26} color="#22c55e" /> That was helpful, thank you!
+  //         </button>
+  //         <button
+  //           onClick={() => onSelect("neutral")}
+  //           className="p-2 rounded-3xl text-sm border max-w-[80%]"
+  //         >
+  //          <Meh size={26} color="#6b7280" /> Somewhat helpful.
+  //         </button>
+  //         <button
+  //           onClick={() => onSelect("negative")}
+  //           className="p-2 rounded-3xl text-sm border max-w-[80%]"
+  //         >
+  //            <Frown size={26} color="#ef4444" /> Not what I was looking for.
+  //         </button>
+  //       </>
+  //     );
+  //   };
+  const QuickEmojiReview = ({
+    onSelect,
+  }: {
+    onSelect: (sentiment: "positive" | "neutral" | "negative") => void;
+  }) => {
+    if (!guestId) return null;
+    setShowDownloadPDF(true);
+    setShowSuggestedOnce(false);
+
+    const isDark = document
+      .querySelector("#hertzora-chat-root")
+      ?.classList.contains("dark");
+
+    const [hovered, setHovered] = useState<string | null>(null);
+
+    const emojiData = {
+      positive: { icon: <Laugh size={24} />, text: "That was helpful, thank you!", color: "#22c55e" },
+      neutral: { icon: <Meh size={24} />, text: "Somewhat helpful.", color: "#6b7280" },
+      negative: { icon: <Frown size={24} />, text: "Not what I was looking for.", color: "#ef4444" },
+    };
+    const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+    const hoverBg = darkenColor(baseBg, 12);
+    return (
+      <div className="flex flex-col  mt-4 text-center">
+        {/* Professional Heading */}
+        <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
+          How was your experience?
+        </p>
+        {/* Emoji Buttons */}
+
+        {(Object.keys(emojiData) as ("positive" | "neutral" | "negative")[]).map((sentiment) => {
+          const isHovered = hovered === sentiment;
+
+          return (
+            <button
+              key={sentiment}
+              onClick={() => onSelect(sentiment)}
+              onMouseEnter={() => setHovered(sentiment)}
+              onMouseLeave={() => setHovered(null)}
+              className="flex items-center gap-2 px-4 py-2 rounded-3xl text-sm border transition-colors duration-200  max-w-[95%] mb-1"
+              style={{
+                backgroundColor: isHovered ? hoverBg : baseBg,
+                borderColor: suggestQuestionsBorder,
+                color: emojiData[sentiment].color,
+              }}
+            // className="flex items-center gap-2 px-4 py-2 rounded-full text-sm border transition-all duration-200 shadow-sm"
+            // style={{
+            //   backgroundColor: isHovered
+            //     ? isDark
+            //       ? darkenColor(suggestQuestionsDark, 10)
+            //       : darkenColor(suggestQuestionsBg, 10)
+            //     : isDark
+            //       ? suggestQuestionsDark
+            //       : suggestQuestionsBg,
+            //   borderColor: suggestQuestionsBorder || "#50484cff",
+            //   color: emojiData[sentiment].color,
+            // }}
+            >
+              <span className="flex-shrink-0">{emojiData[sentiment].icon}</span>
+              <span className="whitespace-nowrap font-medium">{emojiData[sentiment].text}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const saveQuickAssigneeReview = async (
+    sentiment: "positive" | "neutral" | "negative"
+  ) => {
+    if (!guestId) return;
+
+    const payload = {
+      contact_id: guestId,
+      sentiment,
+      review: DEFAULT_REVIEWS[sentiment],
+    };
+
+    try {
+      await fetch(`${API_BASE_URL}/saveReview`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.error("Quick assignee review failed:", err);
+    }
+  };
 
 
   if (!showChat) return null;
@@ -1097,7 +1518,7 @@ export function StandardUI({
               </button>
 
               <button
-                className="flex-1 bg-pink-600 text-white px-2 py-1 rounded-lg text-sm"
+                className="flex-1 bg-purple-600 text-white px-2 py-1 rounded-lg text-sm"
                 // onClick={handleReviewSubmit}
                 onClick={handleReviewSubmit}
               >
@@ -1159,12 +1580,12 @@ export function StandardUI({
     
       
      /*
-     #hertzora-chat-box input{
+     #hertzora-chat-box textarea{
      background: ${backgroundColor};
       border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.3s;
     }
-      .dark #hertzora-chat-box input{
+      .dark #hertzora-chat-box textarea{
      background: #171717;
       border-color: ${darkBorderColor || "#50484cff"};
     }
@@ -1180,26 +1601,26 @@ export function StandardUI({
       
 `}</style>
       <style>{`
-  #hertzora-chat-box input {
+  #hertzora-chat-box textarea {
     background: ${backgroundColor};
     border: 1px solid ${borderColor || "#e9e4e6ff"};
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
-  #hertzora-chat-box input:focus,
-  #hertzora-chat-box input:focus-visible {
+  #hertzora-chat-box textarea:focus,
+  #hertzora-chat-box textarea:focus-visible {
     border-color: ${focusBorderColor};
     box-shadow: 0 0 0 0.5px ${focusBorderColor};
     outline: none;
   }
 
-  .dark #hertzora-chat-box input {
+  .dark #hertzora-chat-box textarea {
     background: #171717;
     border-color: ${darkBorderColor || "#50484cff"};
   }
 
-  .dark #hertzora-chat-box input:focus,
-  .dark #hertzora-chat-box input:focus-visible {
+  .dark #hertzora-chat-box textarea:focus,
+  .dark #hertzora-chat-box textarea:focus-visible {
     border-color: ${darkFocusBorderColor};
     box-shadow: 0 0 0 0.5px ${darkFocusBorderColor};
     outline: none;
@@ -1224,21 +1645,16 @@ export function StandardUI({
           id="hertzora-chat-box"
           className="flex flex-col w-[340px] h-[85vh] rounded-2xl shadow-xl border border-zinc-100 dark:border-neutral-800  overflow-hidden  transition-colors duration-300 "
         >
-          {/* Header bg-white dark:bg-neutral-900*/}
-
 
           <div className="flex items-center justify-between p-3 text-sm font-semibold">
             <div className="flex items-center gap-1">
               {/* <BotMessageSquare className="mr-1.5" />*/}
 
-
               {assignedAgent ? (
-                <div className="h-6 w-6 rounded-full hertzora-background hertzora-color text-white flex items-center justify-center text-xs font-semibold">
+                <div className="h-6 w-6 rounded-full hertzora-background hertzora-color text-white flex items-center justify-center text-xs font-semibold p-3">
                   {getInitials(assignedAgent.name)}
                 </div>
               ) :
-
-
                 botIcon ? (
                   <div
                     className="hertzora-background hertzora-color text-white p-[3px] w-6 h-6 rounded-full flex items-center justify-center">
@@ -1256,26 +1672,11 @@ export function StandardUI({
 
               <span
                 className="ml-2 h-2 w-2 rounded-full bg-green-500"
-                title="Online"
-              />
+                title="Online" />
               <span className="mr-2 text-xs text-green-500">Online</span>
 
             </div>
             <div className="flex gap-1 z-[99999]">
-              {/* <Popover >
-                <PopoverTrigger>
-                  <div  className="flex items-center px-2 py-0.5 rounded-md gap-1 bg-pink-50 dark:bg-pink-800">
-                    <LockIcon
-                      size="12"
-                      className="text-zinc-600 dark:text-zinc-200"
-                    />{" "}
-                    Premium
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="text-xs z-[999999]">
-                  Upgrade to premium to customize your chat page logo and colors.
-                </PopoverContent>
-              </Popover> */}
               {botName !== "HertZora" && botName !== "hertZora" && (
                 <div className="relative">
                   <button
@@ -1289,35 +1690,20 @@ export function StandardUI({
                   </button>
 
                   {showPremiumPopup && (
-                    // <div className="absolute top-full mt-2 left-0 bg-white dark:bg-neutral-800 text-xs p-2 rounded shadow-lg w-64 z-50">
 
-                    //   Upgrade to premium to customize your chat page logo and colors.
-                    // </div>
                     <div
-                      className="absolute top-full mt-2 left-0 bg-white dark:bg-neutral-800 text-xs p-2 rounded shadow-lg w-64 z-50 whitespace-normal break-words"
-                    >
+                      className="absolute top-full mt-2 left-0 bg-white dark:bg-neutral-800 text-xs p-2 rounded shadow-lg w-64 z-50 whitespace-normal break-words">
                       Upgrade to premium <br />to customize your <br />chat page logo and colors.
                     </div>
-
                   )}</div>
               )}
               <div className="hertzora-background hertzora-color flex items-center px-2 py-0.5 rounded-md gap-1 ">
-                <Sparkles size="12" className="text-zinc-600 dark:text-zinc-200" />
-                {/* <img
-                  src={botIcon}
-                  alt="Bot"
-                  className="w-4 h-4 rounded-full object-cover text-zinc-600 dark:text-zinc-200"
-                />  {" "} */}
-                AI
+                <Sparkles size="12" className="text-zinc-600 dark:text-zinc-200" /> AI
               </div>
               <div className="flex items-center px-2 py-0.5 rounded-md">
 
-                <span className=" text-xs font-medium"><button
-                  onClick={() => setShowChat(false)}
-                  className="text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-white"
-                >
-                  ✕
-                </button>
+                <span className=" text-xs font-medium">
+                  <button onClick={() => setShowChat(false)} className="text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-white"> ✕ </button>
                 </span>
               </div>
             </div>
@@ -1327,38 +1713,16 @@ export function StandardUI({
           <div className="flex-1 overflow-y-auto p-3 space-y-2 ">
 
             {chatHistory.length === 0 && (
-              // <div className="mt-10 flex flex-col items-center justify-center text-center">
-              //   <Bot strokeWidth={1.75}
-              //     size={60}
-              //     className="text-pink-600 dark:text-pink-600 mb-2"
-
-              //   />
-              //   <div className="text-lg font-bold text-pink-600">
-              //     Hello, there...! 👋
-              //   </div>
-              //   <div className="mt-1 font-semibold text-gray-500 dark:text-gray-400 text-sm">
-              //     How can I help you today?
-              //   </div>
-              // </div>
               <div className="mt-6 flex flex-col items-center justify-center">
-
-                {/* <Bot strokeWidth={1.75}
-                size={60}
-                className="text-pink-600 dark:text-pink-600 mb-2"
-
-              /> */}
                 <img
                   src={botIcon}
                   alt="Bot Icon"
                   className="hertzora-color hertzora-background w-14 h-14 rounded-full object-cover mb-2 p-3 text-white"
                 />
                 <div className="flex items-center text-lg justify-center font-bold hertzora-hello-text">
-                  {/* Hello,&nbsp;<div>there..!</div> */}
                   {greeting}
-                  {/* <div className="ml-1 text-[22px]">👋</div> */}
                 </div>
                 <div className="mt-2 font-semibold text-gray-500 dark:text-gray-400 text-lg">
-                  {/* How can I help you today? */}
                   {introduction}
                 </div>
                 <div className="text-center text-gray-400 text-sm mt-10">
@@ -1368,9 +1732,6 @@ export function StandardUI({
               </div>
             )}
 
-
-
-
             {chatHistory.map((msg, i) => (
               <div
                 key={i}
@@ -1378,50 +1739,42 @@ export function StandardUI({
                   }`}
               >
                 {msg.sender === "bot" && (
-                  // <div className="flex items-end relative">
-                  //   <Bot strokeWidth={1.75}
-                  //     className="h-[31px] w-[31px] text-pink-600 dark:text-pink-600 border border-pink-600 rounded-full p-1"
-
-                  //   />
-                  // </div>
                   <div className="flex items-end relative" >
-                    {/* <Bot className="h-[31px] w-[31px] rounded-full text-pink-600 dark:text-pink-600 p-1 border border-pink-600 dark:border-neutral-500" /> */}
+
                     <img
                       src={botIcon}
                       alt="Bot"
-
-                      className="hertzora-color hertzora-background h-[31px] w-[31px] rounded-full object-cover p-1 text-white"
-                    />
+                      className="hertzora-color hertzora-background h-[31px] w-[31px] rounded-full object-cover p-1 text-white" />
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-white dark:border-neutral-800" />
                   </div>
                 )}
                 <style>
                   {`
-         /* global.css or module.css */
-          .chat-bubble p {
-            margin: 0.25rem 0;
-            line-height: 1.4;
-          }
+                   /* global.css or module.css */
+                      .chat-bubble p {
+                        margin: 0.25rem 0;
+                        line-height: 1.4;
+                      }
 
-          .chat-bubble a {
-            color: #ed3ab7ff; /* pink link */
-            text-decoration: underline;
-          }
+                      .chat-bubble a {
+                        color: #ed3ab7ff; /* pink link */
+                        text-decoration: underline;
+                      }
 
-          .chat-bubble ul {
-            padding-left: 1rem;
-            list-style-type: disc;
-          }
+                      .chat-bubble ul {
+                        padding-left: 1rem;
+                        list-style-type: disc;
+                      }
 
-          .chat-bubble strong {
-            font-weight: 600;
-          }
+                      .chat-bubble strong {
+                        font-weight: 600;
+                      }
 
-          .chat-bubble em {
-            font-style: italic;
-          }
+                      .chat-bubble em {
+                        font-style: italic;
+                      }
 
-        `}
+                 `}
                 </style>
                 <div
                   className={` chat-bubble px-2 py-1.5 rounded-xl max-w-[75%] text-sm shadow-sm break-words  ${msg.sender === "user"
@@ -1546,17 +1899,12 @@ export function StandardUI({
                       )}
                       {/* time stamp */}
                       {msg.sender === "user" && (
-                        // <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
-                        //   {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
-                        // </span>
+
                         <span className="text-[10px] opacity-70 whitespace-nowrap self-end">
                           {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
                         </span>
                       )}
                       {msg.sender === "bot" && msg.timestamps?.received && (
-                        // <span className="ml-1 text-[10px] opacity-70 bottom-1 right-2 whitespace-nowrap">
-                        //   {msg.timestamps.received}
-                        // </span>
                         <span className="text-[10px] opacity-70 whitespace-nowrap self-end">
                           {msg.timestamps?.sent || msg.timestamps?.received || "Just now"}
                         </span>
@@ -1565,31 +1913,9 @@ export function StandardUI({
                     </div>
 
                   )}
-
-
-
                 </div>
-
                 {msg.sender === "user" && (
-                  // <div className="flex-shrink-0 relative">
-                  //   <img
-                  //     src="../chat.jpg"
-                  //     alt="user"
-                  //     className="h-[30px] w-[30px] rounded-full object-cover"
-                  //   />
-                  // </div>
-
-                  // <div className="flex-shrink-0 relative flex items-center justify-center bg-pink-600  rounded-full h-[30px] w-[30px]">
-                  //   <UserRound size="18" className="text-gray-200" />
-                  // </div>
                   <div className="flex-shrink-0 relative">
-                    {/* <img
-                        src="/chat.png"
-                        alt="user"
-                        height={30}
-                        width={30}
-                        className="rounded-full object-cover h-[30px] w-[30px]"
-                      /> */}
                     <div className="hertzora-color hertzora-background  relative flex items-center justify-center rounded-full h-[30px] w-[30px]">
                       <UserRound size="18" className="uIcon text-gray-200" />
                     </div>
@@ -1599,7 +1925,77 @@ export function StandardUI({
               </div>
             ))}
 
-            <div ref={chatEndRef} />
+            {showQuickReview && (
+              <QuickReview
+                onPositive={async () => {
+                  setShowQuickReview(false);
+                  setShowDownloadPDF(true);
+                  setShowSuggestedOnce(false);
+
+                  // save positive review
+                  await fetch(`${API_BASE_URL}/saveReview`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "x-api-key": apiKey,
+                    },
+                    body: JSON.stringify({
+                      contact_id: guestId,
+                      sentiment: "positive",
+                      review: "😊 Thank you, that helped",
+                    }),
+                  });
+
+
+                  //  endChatSessionByQuickReview("Thankyou for your review... Do you like to start a new chat?");
+                }}
+                onNegative={() => {
+                  setShowQuickReview(false); // continue chat normally
+                }}
+              />
+            )}
+
+            {showQuickAssigneeReview && (
+              <QuickEmojiReview
+                onSelect={async (sentiment) => {
+                  setShowQuickAssigneeReview(false);
+
+                  await saveQuickAssigneeReview(sentiment);
+                  setShowDownloadPDF(true);
+                  setShowSuggestedOnce(false);
+
+                  // endChatSessionByQuickReview("Thanks for chatting! 😊");
+                }}
+              />
+            )}
+            {showDownloadPDF && (
+              <>
+                <div className="flex justify-end mt-3">
+                  <button
+                    onClick={() => {
+                      downloadChatPDF();
+                      setTimeout(() => {
+                        endChatSessionByQuickReview("Thanks for chatting!! 😊");
+                      }, 500);
+                    }}
+                    className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm w-full"
+                  >
+                    📄 Download Chat PDF
+                  </button>
+                </div>
+                <div className="flex justify-end mt-3">
+                  <button
+                    onClick={() => {
+                      endChatSessionByQuickReview("You can start your new chat!")
+                    }}
+                    className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm w-full"
+                  >
+                    💬 Start a new conversation
+                  </button>
+                </div></>
+            )}
+
+
             {showSuggestedOnce &&
               suggestedQuestionList &&
               suggestedQuestionList.length > 0 && (
@@ -1608,90 +2004,119 @@ export function StandardUI({
                   onSelect={handleSuggestionClick}
                 />
               )}
-
-
           </div>
 
-          {/* Input */}
-          <div className="flex items-center border-t border-zinc-200 dark:border-neutral-700 p-3 gap-1" >
+          <div ref={chatEndRef} />
 
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  handleFileUpload(e.target.files[0]);
+
+          {!showDownloadPDF && (
+            <div className="flex items-center border-t border-zinc-200 dark:border-neutral-700 p-3 gap-1" >
+
+              <input
+                type="file" ref={fileInputRef} className="hidden"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    handleFileUpload(e.target.files[0]);
+                  }
+                }}
+              />
+              {allowFileUpload && (
+                <button
+                  onClick={() => fileInputRef.current?.click()} className="flex items-center justify-center h-9 w-9 rounded-full  text-zinc-500 dark:text-zinc-400 btnBorder">
+                  <Plus className="w-4 h-4" />
+                </button>
+
+              )}
+              {/* <input
+                type="text"
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                  if (showQuickReview) {
+                    setShowQuickReview(false);
+                  }
+                  setLastActivity(Date.now());
+                  resetInactivityTimer();
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                placeholder="Ask your question"
+                className="flex-1 outline-none rounded-full px-3 py-2 text-sm text-zinc-500 dark:text-zinc-400 btnBorder"
+
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
+                  if (document.body.classList.contains("dark")) {
+                    e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
+                  }
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "";
+                }}
+              /> */}
+                <textarea
+              value={message}
+               onChange={(e) => {
+                  setMessage(e.target.value);
+                  if (showQuickReview) {
+                    setShowQuickReview(false);
+                  }
+                  setLastActivity(Date.now());
+                  resetInactivityTimer();
+                }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
                 }
               }}
+              rows={1}
+              onInput={(e) => {
+                const el = e.currentTarget;
+
+                el.style.height = "auto";
+
+                const maxHeight = 72; // 3 rows
+                const newHeight = Math.min(el.scrollHeight, maxHeight);
+
+                el.style.height = newHeight + "px";
+                el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
+              }}
+              placeholder="Type a message..."
+              className="flex-1 outline-none rounded-2xl px-3 py-2 text-sm text-zinc-800 dark:text-zinc-400 btnBorder"
+              onFocus={(e) => {
+                  e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
+                  if (document.body.classList.contains("dark")) {
+                    e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
+                  }
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "";
+                }}
             />
-            {allowFileUpload && (
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center justify-center h-9 w-9 rounded-full  text-zinc-500 dark:text-zinc-400 btnBorder"
-              >
-                {/* border border-zinc-200 dark:border-neutral-700 */}
-                {/* mr-2 */}
-                <Plus className="w-4 h-4" />
+
+              <style>{`
+                .send-button {
+                
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 9999px; /* fully rounded */
+                  width: 36px;
+                  height: 36px;
+                  color: white;
+                  cursor: pointer;
+                }
+
+                .send-button svg {
+                  width: 16px;
+                  height: 16px;
+                }
+              `}</style>
+              {/* #7e23a8ff */}
+              <button onClick={sendMessage} className="send-button hertzora-background">
+                <SendHorizontal />
               </button>
 
-            )}
-            <input
-              type="text"
-              value={message}
-              // onChange={(e) => setMessage(e.target.value)}
-              onChange={(e) => {
-                setMessage(e.target.value);
-                setLastActivity(Date.now());
-                resetInactivityTimer();
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-              placeholder="Ask your question"
-              className="flex-1 outline-none rounded-full px-3 py-2 text-sm text-zinc-500 dark:text-zinc-400 btnBorder"
-
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = borderColor || "#e9e4e6"; // normal mode
-                if (document.body.classList.contains("dark")) {
-                  e.currentTarget.style.borderColor = darkBorderColor || "#50484c"; // dark mode
-                }
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = ""; // reset to Tailwind default
-              }}
-            />
-            {/* border border-zinc-200 dark:border-neutral-700  dark:bg-neutral-900 */}
-            {/* <button
-              onClick={sendMessage}
-              className="flex items-center justify-center h-9 w-9 rounded-full bg-gradient-to-r from-pink-600 to-pink-700 text-white ml-2"
-            >
-              <SendHorizonal className="w-4 h-4" />
-            </button> 
-             background: "linear-gradient(to right, #7c3aed, #ec4899, #3b82f6)",*/}
-
-            <style>{`
-  .send-button {
-   
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9999px; /* fully rounded */
-    width: 36px;
-    height: 36px;
-    color: white;
-    cursor: pointer;
-  }
-
-  .send-button svg {
-    width: 16px;
-    height: 16px;
-  }
-`}</style>
-            {/* #7e23a8ff */}
-            <button onClick={sendMessage} className="send-button hertzora-background">
-              <SendHorizontal />
-            </button>
-
-          </div>
+            </div>)}
 
           <div className="font-medium text-center border-b border-zinc-200 dark:border-neutral-700 pb-3 text-xs text-zinc-400 dark:text-zinc-400">
             {botName} may produce inaccurate information
@@ -1719,7 +2144,6 @@ export function StandardUI({
           }
         `}
                 </style>
-
 
                 {/* Use the class */}
                 <a href="https://app.hertzora.ai/">
