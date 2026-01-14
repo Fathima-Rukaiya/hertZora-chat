@@ -1006,7 +1006,7 @@ export function StandardUI({
 
         <button
           onClick={onPositive}
-          className="quick-review-btn p-2 rounded-3xl text-sm max-w-[80%]"
+          className="quick-review-btn p-2 border rounded-3xl text-sm max-w-[80%]"
           style={baseStyle}
         >
           😊 Thank you, that helped
@@ -1014,7 +1014,7 @@ export function StandardUI({
 
         <button
           onClick={onNegative}
-          className="quick-review-btn p-2 rounded-3xl text-sm max-w-[80%]"
+          className="quick-review-btn border p-2 rounded-3xl text-sm max-w-[80%]"
           style={baseStyle}
         >
           ❓ No I have more questions
