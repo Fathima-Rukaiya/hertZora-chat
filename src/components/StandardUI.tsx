@@ -852,7 +852,7 @@ export function StandardUI({
       <div className="flex flex-col items-end gap-2 mt-3">
         <button
           onClick={onPositive}
-          className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
+          className="quick-review-btn p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
           style={baseStyle}
           onMouseEnter={(e) =>
             (e.currentTarget.style.backgroundColor = hoverBg)
@@ -866,7 +866,7 @@ export function StandardUI({
 
         <button
           onClick={onNegative}
-          className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
+          className="quick-review-btn p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
           style={baseStyle}
           onMouseEnter={(e) =>
             (e.currentTarget.style.backgroundColor = hoverBg)
@@ -1464,29 +1464,29 @@ export function StandardUI({
     transition: border-color 0.3s;
 
   }
-  .dark .hertzora-hello-text {
-    color: ${borderColor};
-    opacity: 1;
-    
-  }
-    #hertzora-chat-box{
-     background: ${backgroundColor};
-    }
-      .dark #hertzora-chat-box{
-     background: #171717;
-    }
-/* Remove default blue focus / tap highlight */
-button {
-  outline: none;
-  box-shadow: none;
-  -webkit-tap-highlight-color: transparent;
-}
+      .dark .hertzora-hello-text {
+        color: ${borderColor};
+        opacity: 1;
+        
+      }
+        #hertzora-chat-box{
+        background: ${backgroundColor};
+        }
+          .dark #hertzora-chat-box{
+        background: #171717;
+        }
+        /* Remove default blue focus / tap highlight */
+        button {
+          outline: none;
+          box-shadow: none;
+          -webkit-tap-highlight-color: transparent;
+        }
 
-button:focus,
-button:focus-visible {
-  outline: none;
-  box-shadow: none;
-}
+        button:focus,
+        button:focus-visible {
+          outline: none;
+          box-shadow: none;
+        }
 
     
       
