@@ -857,7 +857,7 @@ export function StandardUI({
       <div className="flex flex-col items-end gap-2 mt-3">
         <button
           onClick={onPositive}
-          className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
+          className="quick-review-btn p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
           style={baseStyle}
           onMouseEnter={(e) =>
             (e.currentTarget.style.backgroundColor = hoverBg)
@@ -871,7 +871,7 @@ export function StandardUI({
 
         <button
           onClick={onNegative}
-          className="p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
+          className="quick-review-btn p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
           style={baseStyle}
           onMouseEnter={(e) =>
             (e.currentTarget.style.backgroundColor = hoverBg)
@@ -1266,80 +1266,7 @@ export function StandardUI({
     negative: "Not what I was looking for.",
   };
 
-  //   const QuickEmojiReview = ({
-  //     onSelect,
-  //   }: {
-  //     onSelect: (sentiment: "positive" | "neutral" | "negative") => void;
-  //   }) => {
-  //     if (!guestId) return;
-  //  const isDark = document
-  //       .querySelector("#hertzora-chat-root")
-  //       ?.classList.contains("dark");
 
-  //     return (
-  //       <>
-
-  //         {/* <div className="flex gap-3 mt-3 items-center justify-start">
-  //           <button
-  //             onClick={() => onSelect("positive")}
-  //             className="p-2 rounded-full hover:scale-110 transition"
-  //             title="Happy"
-  //           >
-  //             <Laugh size={26} color="#22c55e" />
-  //           </button>
-
-  //           <button
-  //             onClick={() => onSelect("neutral")}
-  //             className="p-2 rounded-full hover:scale-110 transition"
-  //             title="Neutral"
-  //           >
-  //             <Meh size={26} color="#6b7280" />
-  //           </button>
-
-  //           <button
-  //             onClick={() => onSelect("negative")}
-  //             className="p-2 rounded-full hover:scale-110 transition"
-  //             title="Sad"
-  //           >
-  //             <Frown size={26} color="#ef4444" />
-  //           </button>
-
-  //           <span className="text-xs opacity-60 ml-2">
-  //             Rate this chat
-  //           </span>
-  //         </div> */}
-
-  //         <button
-  //           onClick={() => onSelect("positive")}
-  //           className="p-2 rounded-3xl text-sm border max-w-[80%]"
-  //            style={{
-  //                   backgroundColor: isHovered
-  //                     ? isDark
-  //                       ? suggestQuestionsDark
-  //                       : suggestQuestionsBg
-  //                     : "transparent",
-
-  //                   borderColor: suggestQuestionsBorder || "#50484cff",
-  //                   color: isDark ? "#ffffff" : "#1F2937",
-  //                 }}
-  //         >
-  //            <Laugh size={26} color="#22c55e" /> That was helpful, thank you!
-  //         </button>
-  //         <button
-  //           onClick={() => onSelect("neutral")}
-  //           className="p-2 rounded-3xl text-sm border max-w-[80%]"
-  //         >
-  //          <Meh size={26} color="#6b7280" /> Somewhat helpful.
-  //         </button>
-  //         <button
-  //           onClick={() => onSelect("negative")}
-  //           className="p-2 rounded-3xl text-sm border max-w-[80%]"
-  //         >
-  //            <Frown size={26} color="#ef4444" /> Not what I was looking for.
-  //         </button>
-  //       </>
-  //     );
-  //   };
   const QuickEmojiReview = ({
     onSelect,
   }: {
@@ -1578,6 +1505,16 @@ export function StandardUI({
       .dark #hertzora-chat-box{
      background: #171717;
     }
+/* Apply to all Quick Review buttons */
+.quick-review-btn {
+  outline: none !important;
+  box-shadow: none !important;
+}
+.quick-review-btn:focus,
+.quick-review-btn:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
 
     
       
