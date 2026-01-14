@@ -947,20 +947,29 @@ export function StandardUI({
 
 
   const QuickReview = ({ onPositive, onNegative }: {
-  onPositive: () => void;
-  onNegative: () => void;
-}) => {
+    onPositive: () => void;
+    onNegative: () => void;
+  }) => {
   const isDark = document
-    .querySelector("#hertzora-chat-root")
-    ?.classList.contains("dark");
+      .querySelector("#hertzora-chat-root")
+      ?.classList.contains("dark");
 
-  const baseBg = isDark
-    ? suggestQuestionsDark || "#27272a"   // dark ash fallback
-    : backgroundColor || "#f4f4f5";      // light ash fallback
+    const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+    const hoverBg = darkenColor(baseBg, 12);
 
-  return (
-    <div className="flex flex-col items-end gap-2 mt-3">
-      <style>{`
+    const baseStyle = {
+      backgroundColor: baseBg,
+      borderColor: suggestQuestionsBorder,
+      color: "#333",
+    };
+
+    const hoverStyle = {
+      backgroundColor: hoverBg,
+    };
+
+    return (
+      <div className="flex flex-col items-end gap-2 mt-3">
+        <style>{`
         button {
           -webkit-tap-highlight-color: transparent;
         }
@@ -990,30 +999,24 @@ export function StandardUI({
         }
       `}</style>
 
-      <button
-        onClick={onPositive}
-        className="quick-review-btn p-2 rounded-3xl text-sm max-w-[80%]"
-        style={{
-          backgroundColor: baseBg,
-          color: "#22c55e",
-        }}
-      >
-        😊 Thank you, that helped
-      </button>
+        <button
+          onClick={onPositive}
+          className="quick-review-btn p-2 rounded-3xl text-sm max-w-[80%]"
+          style={baseStyle}
+        >
+          😊 Thank you, that helped
+        </button>
 
-      <button
-        onClick={onNegative}
-        className="quick-review-btn p-2 rounded-3xl text-sm max-w-[80%]"
-        style={{
-          backgroundColor: baseBg,
-          color: "#6b7280",
-        }}
-      >
-        ❓ No I have more questions
-      </button>
-    </div>
-  );
-};
+        <button
+          onClick={onNegative}
+          className="quick-review-btn p-2 rounded-3xl text-sm max-w-[80%]"
+          style={baseStyle}
+        >
+          ❓ No I have more questions
+        </button>
+      </div>
+    );
+  };
 
 
   const sendMessage = async () => {
