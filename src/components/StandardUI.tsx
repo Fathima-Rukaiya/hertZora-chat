@@ -981,7 +981,7 @@ export function StandardUI({
           transition: background-color 0.2s ease;
         }*/
  .quick-review-btn {
-          outline: none;
+         
           box-shadow: none ;
           border-width: 1px;
     border-style: solid;
@@ -990,7 +990,7 @@ export function StandardUI({
         }
         .quick-review-btn:focus,
         .quick-review-btn:focus-visible {
-          outline: none;
+        
           box-shadow: none !important;
           border: 1px solid transparent !important;
         }
