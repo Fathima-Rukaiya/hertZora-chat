@@ -103,6 +103,7 @@ export function StandardUI({
     name: string;
   } | null>(null);
 
+const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -1043,6 +1044,10 @@ export function StandardUI({
     resetInactivityTimer();
 
     setMessage("");
+    if (textareaRef.current) {
+  textareaRef.current.style.height = "auto";
+  textareaRef.current.style.overflowY = "hidden";
+}
 
     // Add user's message immediately to UI
     //addUserMessage(messageText);
@@ -2107,6 +2112,7 @@ export function StandardUI({
                 }}
               />*/}
               <textarea
+               ref={textareaRef}
                 value={message}
                 onChange={(e) => {
                   setMessage(e.target.value);
