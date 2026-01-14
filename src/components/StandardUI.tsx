@@ -958,11 +958,20 @@ export function StandardUI({
     const hoverBg = darkenColor(baseBg, 12);
 
     const baseStyle = {
-      backgroundColor: baseBg,
+      backgroundColor: !isDark ?baseBg:"#3f3f46",
       borderColor: "1px solid ", suggestQuestionsBorder,
       color: isDark ? "#ffffff" : "#333",
       transition: "background-color 0.3s",
     };
+    
+//  const baseStyleDark = {
+//       backgroundColor: "#3f3f46 !important",
+//       borderColor: "1px solid  #2a2a33",
+//       color: isDark ? "#ffffff" : "#333",
+//       transition: "background-color 0.3s",
+
+         
+//     };
 
     const hoverStyle = {
       backgroundColor: hoverBg,
@@ -996,13 +1005,7 @@ export function StandardUI({
         }
 
         
-        .dark .quick-review-btn{
-        borderColor: 1px solid  #2a2a33,
-          background-color: #3f3f46 !important;
-          color: #ffffff !important;
-              transition: background-color 0.3s;
-
-        }
+        
        
       `}</style>
 
