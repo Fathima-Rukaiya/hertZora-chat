@@ -958,10 +958,10 @@ export function StandardUI({
     const hoverBg = darkenColor(baseBg, 12);
     const darkBg = "#3f3f46";
     const baseStyle = {
-      backgroundColor: !isDark ? baseBg : darkBg,
+      // backgroundColor: !isDark ? baseBg : darkBg,
       borderColor: "1px solid ", suggestQuestionsBorder,
       color: isDark ? "#ffffff" : "#333",
-      transition: "background-color 0.3s ease",
+      // transition: "background-color 0.3s ease",
     };
 
     //     const baseStyle: React.CSSProperties = {
