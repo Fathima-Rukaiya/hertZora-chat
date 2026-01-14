@@ -974,16 +974,23 @@ export function StandardUI({
           -webkit-tap-highlight-color: transparent;
         }
 
-        .quick-review-btn {
+      /*  .quick-review-btn {
           outline: none !important;
           box-shadow: none !important;
           border: 1px solid transparent !important; /* 🚫 no blue */
           transition: background-color 0.2s ease;
+        }*/
+ .quick-review-btn {
+          outline: none;
+          box-shadow: none ;
+          border-width: 1px;
+    border-style: solid;
+    border-color: var(--qr-border);
+          transition: background-color 0.2s ease;
         }
-
         .quick-review-btn:focus,
         .quick-review-btn:focus-visible {
-          outline: none !important;
+          outline: none;
           box-shadow: none !important;
           border: 1px solid transparent !important;
         }
@@ -993,10 +1000,10 @@ export function StandardUI({
           background-color: #d4d4d4 !important;
         }
 
-        /* dark hover */
+        /* dark hover 
         .dark .quick-review-btn:hover {
           background-color: #3f3f46 !important;
-        }
+        }*/
       `}</style>
 
         <button
