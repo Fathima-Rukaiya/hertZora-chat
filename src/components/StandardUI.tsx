@@ -850,6 +850,42 @@ export function StandardUI({
 
     return (
       <div className="flex flex-col items-end gap-2 mt-3">
+        <style>{`
+              button {
+                -webkit-tap-highlight-color: transparent;
+              }
+
+              button:focus,
+              button:focus-visible {
+                outline: none !important;
+                box-shadow: none !important;
+              }
+
+              /* remove blue focus / border */
+              .quick-review-btn {
+                outline: none;
+                box-shadow: none;
+                border-color: var(--qr-border, #747071);
+                transition: background-color 0.2s ease, border-color 0.2s ease;
+              }
+
+              .quick-review-btn:focus,
+              .quick-review-btn:focus-visible {
+                outline: none;
+                box-shadow: none;
+                border-color: var(--qr-border, #747071);
+              }
+
+              /* light mode hover */
+              .quick-review-btn:hover {
+                background-color: #d4d4d4 !important; /* ash */
+              }
+
+              /* dark mode hover */
+              .dark .quick-review-btn:hover {
+                background-color: #3f3f46 !important; /* dark ash */
+              }
+        `}</style>
         {/* <button
           onClick={onPositive}
           className="quick-review-btn p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
@@ -1473,30 +1509,6 @@ export function StandardUI({
      .hertzora-color {
    color: "#fff" !important;
 
-/* remove blue focus / border */
-.quick-review-btn {
-  outline: none;
-  box-shadow: none;
-  border-color: var(--qr-border, #747071);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.quick-review-btn:focus,
-.quick-review-btn:focus-visible {
-  outline: none;
-  box-shadow: none;
-  border-color: var(--qr-border, #747071);
-}
-
-/* light mode hover */
-.quick-review-btn:hover {
-  background-color: #d4d4d4 !important; /* ash */
-}
-
-/* dark mode hover */
-.dark .quick-review-btn:hover {
-  background-color: #3f3f46 !important; /* dark ash */
-}
 
    
 
@@ -1530,16 +1542,7 @@ export function StandardUI({
         background: #171717;
         }
      
-        button {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button:focus,
-button:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
+  
 
     
       
