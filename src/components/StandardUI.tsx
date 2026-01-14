@@ -956,14 +956,20 @@ export function StandardUI({
     const reviewDark = "#404040"
     const baseBg = isDark ? reviewDark : backgroundColor;
     const hoverBg = darkenColor(baseBg, 12);
+const darkBg = "#3f3f46";
+    // const baseStyle = {
+    //   backgroundColor: !isDark ?baseBg:"#3f3f46",
+    //   borderColor: "1px solid ", suggestQuestionsBorder,
+    //   color: isDark ? "#ffffff" : "#333",
+    //   transition: "background-color 0.3s",
+    // };
+    const baseStyle: React.CSSProperties = {
+  backgroundColor: isDark ? darkBg : baseBg,
+  border: `1px solid ${suggestQuestionsBorder}`,
+  color: isDark ? "#ffffff" : "#333333",
+  transition: "background-color 0.2s ease",
+};
 
-    const baseStyle = {
-      backgroundColor: !isDark ?baseBg:"#3f3f46",
-      borderColor: "1px solid ", suggestQuestionsBorder,
-      color: isDark ? "#ffffff" : "#333",
-      transition: "background-color 0.3s",
-    };
-    
 //  const baseStyleDark = {
 //       backgroundColor: "#3f3f46 !important",
 //       borderColor: "1px solid  #2a2a33",
