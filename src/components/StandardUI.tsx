@@ -960,7 +960,7 @@ export function StandardUI({
     const baseStyle = {
       // backgroundColor: !isDark ? baseBg : darkBg,
       borderColor: "1px solid ", suggestQuestionsBorder,
-      color: isDark ? "#ffffff" : "#333",
+      // color: isDark ? "#ffffff" : "#333",
       // transition: "background-color 0.3s ease",
     };
 
