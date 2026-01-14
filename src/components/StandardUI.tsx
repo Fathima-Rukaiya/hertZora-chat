@@ -961,6 +961,7 @@ export function StandardUI({
       backgroundColor: baseBg,
       borderColor: "1px solid ", suggestQuestionsBorder,
       color: isDark ? "#ffffff" : "#333",
+      transition: "background-color 0.3s",
     };
 
     const hoverStyle = {

@@ -216,15 +216,14 @@ export function ChatUI({ apiKey,
                         style={{ background: gradient }}
                         className="hertzora-color rounded-full shadow-xl flex items-center gap-2 px-4 py-2 text-white "
                         onMouseEnter={(e) => (e.currentTarget.style.background = hoverGradient)}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = gradient)}
-                    >
+                        onMouseLeave={(e) => (e.currentTarget.style.background = gradient)} >
 
                         {botIcon ? (
                             <img src={botIcon} alt={botName} className="w-6 h-6 rounded-full" />
                         ) : (
                             <Bot strokeWidth={1.75} size={22} />
                         )}
-                        <span className="font-semibold text-sm">Ask {botName}rrf
+                        <span className="font-semibold text-sm">Ask {botName}rree
                         </span>
                     </button>
 
