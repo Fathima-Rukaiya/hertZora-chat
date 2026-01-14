@@ -996,7 +996,9 @@ export function StandardUI({
 
         
         .dark .quick-review-btn{
+        borderColor: 1px solid  #2a2a33,
           background-color: #3f3f46 !important;
+          color: #ffffff !important;
         }
        
       `}</style>
