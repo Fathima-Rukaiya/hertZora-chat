@@ -850,7 +850,7 @@ export function StandardUI({
 
     return (
       <div className="flex flex-col items-end gap-2 mt-3">
-        <button
+        {/* <button
           onClick={onPositive}
           className="quick-review-btn p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
           style={baseStyle}
@@ -876,7 +876,31 @@ export function StandardUI({
           }
         >
           ❓No I have more question
+        </button> */}
+        <button
+          onClick={onPositive}
+          className="quick-review-btn p-2 rounded-3xl text-sm border max-w-[80%]"
+          style={{
+            backgroundColor: baseBg,
+            borderColor: suggestQuestionsBorder,
+            color: "#333",
+          }}
+        >
+          😊 Thank you, that helped
         </button>
+
+        <button
+          onClick={onNegative}
+          className="quick-review-btn p-2 rounded-3xl text-sm border max-w-[80%]"
+          style={{
+            backgroundColor: baseBg,
+            borderColor: suggestQuestionsBorder,
+            color: "#333",
+          }}
+        >
+          ❓ No I have more questions
+        </button>
+
       </div>
     );
   };
@@ -1444,6 +1468,15 @@ export function StandardUI({
 }
      .hertzora-color {
    color: "#fff" !important;
+
+   .quick-review-btn:hover {
+  background-color: #d4d4d4 !important; /* ash */
+}
+
+.dark .quick-review-btn:hover {
+  background-color: #3f3f46 !important; /* dark ash */
+}
+
    
 
       `}</style>
