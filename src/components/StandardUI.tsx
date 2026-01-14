@@ -877,13 +877,16 @@ export function StandardUI({
         >
           ❓No I have more question
         </button> */}
+
+
         <button
           onClick={onPositive}
           className="quick-review-btn p-2 rounded-3xl text-sm border max-w-[80%]"
           style={{
             backgroundColor: baseBg,
             borderColor: suggestQuestionsBorder,
-            color: "#333",
+            color: "#22c55e", // green
+            ["--qr-border" as any]: suggestQuestionsBorder,
           }}
         >
           😊 Thank you, that helped
@@ -895,7 +898,8 @@ export function StandardUI({
           style={{
             backgroundColor: baseBg,
             borderColor: suggestQuestionsBorder,
-            color: "#333",
+            color: "#6b7280", // ash/gray
+            ["--qr-border" as any]: suggestQuestionsBorder,
           }}
         >
           ❓ No I have more questions
@@ -1469,10 +1473,27 @@ export function StandardUI({
      .hertzora-color {
    color: "#fff" !important;
 
-   .quick-review-btn:hover {
+/* remove blue focus / border */
+.quick-review-btn {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--qr-border, #747071);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.quick-review-btn:focus,
+.quick-review-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--qr-border, #747071);
+}
+
+/* light mode hover */
+.quick-review-btn:hover {
   background-color: #d4d4d4 !important; /* ash */
 }
 
+/* dark mode hover */
 .dark .quick-review-btn:hover {
   background-color: #3f3f46 !important; /* dark ash */
 }
@@ -1508,18 +1529,17 @@ export function StandardUI({
           .dark #hertzora-chat-box{
         background: #171717;
         }
-        /* Remove default blue focus / tap highlight */
+     
         button {
-          outline: none;
-          box-shadow: none;
-          -webkit-tap-highlight-color: transparent;
-        }
+  -webkit-tap-highlight-color: transparent;
+}
 
-        button:focus,
-        button:focus-visible {
-          outline: none;
-          box-shadow: none;
-        }
+button:focus,
+button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 
     
       
