@@ -959,7 +959,7 @@ export function StandardUI({
 
     const baseStyle = {
       backgroundColor: baseBg,
-      borderColor: suggestQuestionsBorder,
+      borderColor: "1px solid ",suggestQuestionsBorder,
       color: "#333",
     };
 
@@ -983,16 +983,14 @@ export function StandardUI({
  .quick-review-btn {
          
           box-shadow: none ;
-          border-width: 1px;
-    border-style: solid;
-    border-color: var(--qr-border);
+      
           transition: background-color 0.2s ease;
         }
         .quick-review-btn:focus,
         .quick-review-btn:focus-visible {
         
           box-shadow: none !important;
-          border: 1px solid transparent !important;
+          
         }
 
         /* light hover */
