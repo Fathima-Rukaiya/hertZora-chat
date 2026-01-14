@@ -960,7 +960,7 @@ export function StandardUI({
     const baseStyle = {
       backgroundColor: baseBg,
       borderColor: "1px solid ", suggestQuestionsBorder,
-      color: "#333",
+      color: isDark ? "#ffffff" : "#333",
     };
 
     const hoverStyle = {
@@ -980,17 +980,13 @@ export function StandardUI({
           border: 1px solid transparent !important; /* 🚫 no blue */
           transition: background-color 0.2s ease;
         }*/
- .quick-review-btn {
-         
+        .quick-review-btn {
           box-shadow: none ;
-      
           transition: background-color 0.2s ease;
         }
         .quick-review-btn:focus,
         .quick-review-btn:focus-visible {
-        
           box-shadow: none !important;
-          
         }
 
         /* light hover */
@@ -998,10 +994,10 @@ export function StandardUI({
           background-color: #d4d4d4 !important;
         }
 
-        /* dark hover 
-        .dark .quick-review-btn:hover {
+        
+        .dark .quick-review-btn{
           background-color: #3f3f46 !important;
-        }*/
+        }
        
       `}</style>
 
