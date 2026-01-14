@@ -950,16 +950,16 @@ export function StandardUI({
     onPositive: () => void;
     onNegative: () => void;
   }) => {
-  const isDark = document
+    const isDark = document
       .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
-
-    const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+    const reviewDark = "#404040"
+    const baseBg = isDark ? reviewDark : backgroundColor;
     const hoverBg = darkenColor(baseBg, 12);
 
     const baseStyle = {
       backgroundColor: baseBg,
-      borderColor: "1px solid ",suggestQuestionsBorder,
+      borderColor: "1px solid ", suggestQuestionsBorder,
       color: "#333",
     };
 
