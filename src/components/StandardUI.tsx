@@ -1002,11 +1002,12 @@ export function StandardUI({
         .dark .quick-review-btn:hover {
           background-color: #3f3f46 !important;
         }*/
+       
       `}</style>
 
         <button
           onClick={onPositive}
-          className="quick-review-btn p-2 border rounded-3xl text-sm max-w-[80%]"
+          className="quick-review-btn p-2 border rounded-3xl text-sm max-w-[80%] dark:bg-neutral-700"
           style={baseStyle}
         >
           😊 Thank you, that helped
@@ -1014,7 +1015,7 @@ export function StandardUI({
 
         <button
           onClick={onNegative}
-          className="quick-review-btn border p-2 rounded-3xl text-sm max-w-[80%]"
+          className="quick-review-btn border p-2 rounded-3xl text-sm max-w-[80%] dark:bg-neutral-700"
           style={baseStyle}
         >
           ❓ No I have more questions
