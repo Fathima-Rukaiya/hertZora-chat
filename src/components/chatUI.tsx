@@ -19,7 +19,8 @@ export function ChatUI({ apiKey,
     const [botName, setBotName] = useState("ChatBot");
     const [botIcon, setBotIcon] = useState<string | null>(null);
     const [botColors, setBotColors] = useState<string[] | null>(null);
- const [greeting, setGreeting] = useState<string>("");
+
+    const [greeting, setGreeting] = useState<string>("");
     const [introduction, setIntroduction] = useState<string>("");
     const [startButtonText, setStartButtonText] = useState<string>("Start Chat");
     const [backgroundColor, setBackgroundColor] = useState<string>("#ffffffff");
@@ -32,11 +33,9 @@ export function ChatUI({ apiKey,
     const [welcomeMsg, SetWelcomeMsg] = useState<string>("");
 
     const [suggestedQuestions, setSuggestedQuestions] = useState<string[] | null>(null);
-   
     const [errorMessage, setErrorMessage] = useState("");
     const [customWidgetIcon, setCustomWidgetIcon] = useState<string | null>(null);
     const [buttonSize, setButtonSize] = useState<string | null>(null);
-
 
     // const API_BASE_URL = "https://app.hostingate.com/api/clientCustomerChatBox";
     const API_BASE_URL = "https://app.hertzora.ai/api/clientCustomerChatBox";
@@ -54,10 +53,12 @@ export function ChatUI({ apiKey,
                     body: JSON.stringify({ api_key: apiKey }),
                 });
 
-                if (!res.ok) return setIsAllowed(false);
+                // if (!res.ok) return setIsAllowed(false);
+
 
                 const data = await res.json();
-                  if (!res.ok || !data.allowed) {
+
+                if (!res.ok || !data.allowed) {
                     setIsAllowed(false);
                     setErrorMessage(data.reason || "This chat widget is not authorized.");
                     return;
@@ -65,7 +66,7 @@ export function ChatUI({ apiKey,
                 setIsAllowed(data.allowed ?? false);
 
                 if (data.allowed) {
-
+                    setIsAllowed(true);
                     const name = data.bot_name || "ChatBot";
                     const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
                     setBotName(capitalizedName);
@@ -74,9 +75,9 @@ export function ChatUI({ apiKey,
                     console.log(data.bot_name)
                     setBotColors(data.colors || null);
 
-                     setGreeting(data.greeting || "Hello,  there..! 👋");
+                    setGreeting(data.greeting || "Hello 👋");
                     setIntroduction(data.introduction || "How can I help you today?");
-                    setStartButtonText(data.start_button_text || "Start a conversation...");
+                    setStartButtonText(data.start_button_text || "Start Chat");
                     setBackgroundColor(data.backgroundColor || "#ffffff")
                     //  setChatTriggerType(data.chat_trigger || "bubble");
 
@@ -88,6 +89,7 @@ export function ChatUI({ apiKey,
                     setCustomWidgetIcon(data.customWidgetIcon || null);
                     setButtonSize(data.buttonSize || null);
 
+                } else {
 
                 }
             } catch {
@@ -121,7 +123,9 @@ export function ChatUI({ apiKey,
     if (isAllowed === false)
 
         return (
-            <div className="fixed bottom-6 right-6 z-[9999] text-sm text-red-600 bg-white p-3 rounded-xl shadow">
+            <div className={`fixed bottom-6 z-[9999] text-sm text-red-600 bg-white p-3 rounded-xl shadow ${buttonPosition === "left" ? "left-6" : "right-6"
+                }`}
+            >
                 <p className="text-gray-600 text-sm">{errorMessage}</p>
                 <p className="text-gray-400 text-xs mt-2">Please contact the admin.</p>
             </div>
@@ -149,40 +153,26 @@ export function ChatUI({ apiKey,
         : gradient;
 
     const borderColor = botColors ? darkenColor(botColors[0], 20) : "#e9e4e6ff";
-const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
-
-
+    const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
 
     return (
-        // <ThemeProvider
-        //     attribute="class"
-        //     defaultTheme="system"
-        //     enableSystem
-        // >
-       <div
+
+        <div
             className={`fixed bottom-6 z-[9999] ${buttonPosition === "left" ? "left-6" : "right-6"}`}>
-            {/* <div ref={popoverRef}> */}
-            {/* , */}
             <div ref={popoverRef} className="relative">
                 <style>{`
- 
- 
-     .hertzora-color {
-   color: "#fff" !important;
- 
-}
+                    .hertzora-color {
+                        color: #fff !important;
+                    }
+                `}</style>
 
-`}</style>
                 <style>{`
-  .dark #hertzora-btn {
-     background: ${darkModeGradient} !important;
-  }
-`}</style>
-                {/*     .hertzora-color {
-   color: "#fff" !important;
-   background: linear-gradient(to right, #db2777, #A724A8, #7e22ce) !important;
-} */}
-  {customWidgetIcon ? (
+                    .dark #hertzora-btn {
+                        background: ${darkModeGradient} !important;
+                    }
+                `}</style>
+
+                {customWidgetIcon ? (
                     // Custom Widget Button
                     <button
                         id="custom-widget-btn"
@@ -220,34 +210,34 @@ const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
                         />
                     </button>
                 ) : (
-                <button
-                    id="hertzora-btn"
-                    onClick={() => setIsOpen(!isOpen)}
-                    style={{ background: gradient }}
-                    className="hertzora-color rounded-full shadow-xl flex items-center gap-2 px-4 py-2 text-white "
-                    onMouseEnter={(e) => (e.currentTarget.style.background = hoverGradient)}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = gradient)}
-                >
-                    {/* <Bot strokeWidth={1.75} size={22} /> */}
+                    <button
+                        id="hertzora-btn"
+                        onClick={() => setIsOpen(!isOpen)}
+                        style={{ background: gradient }}
+                        className="hertzora-color rounded-full shadow-xl flex items-center gap-2 px-4 py-2 text-white "
+                        onMouseEnter={(e) => (e.currentTarget.style.background = hoverGradient)}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = gradient)}
+                    >
 
-                    {botIcon ? (
-                        <img src={botIcon} alt={botName} className="w-6 h-6 rounded-full" />
-                    ) : (
-                        <Bot strokeWidth={1.75} size={22} />
-                    )}
-                    <span className="font-semibold text-sm">Ask {botName}...
-                        
-                    </span>
-                </button>
+                        {botIcon ? (
+                            <img src={botIcon} alt={botName} className="w-6 h-6 rounded-full" />
+                        ) : (
+                            <Bot strokeWidth={1.75} size={22} />
+                        )}
+                        <span className="font-semibold text-sm">Ask {botName}*
+
+                        </span>
+                    </button>
+
                 )}
+
                 {isOpen && (
-                    // {botName}
-                   <div
+                    <div
                         className={`absolute bottom-full mb-3  w-80 p-0 shadow-2xl rounded-xl transition-all duration-200
                             ${buttonPosition === "left" ? "left-0" : "right-0"
                             }`}>
-                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} gradient={gradient} darkGradient={darkModeGradient} borderColor={borderColor}  darkBorderColor={darkBorderColor}
-                          greeting={greeting}
+                        <StandardUI apiKey={apiKey} shadowContainer={shadowContainer} botIcon={botIcon || ""} botName={botName} gradient={gradient} darkGradient={darkModeGradient} borderColor={borderColor} darkBorderColor={darkBorderColor}
+                            greeting={greeting}
                             introduction={introduction}
                             startButtonText={startButtonText}
                             backgroundColor={backgroundColor}
@@ -256,10 +246,54 @@ const darkBorderColor = botColors ? darkenColor(botColors[2], 20) : "#50484cff";
                             position={buttonPosition}
                             welcomeMsg={welcomeMsg}
                             suggestedQuestionList={suggestedQuestions || undefined}
-                         />
+                        />
                     </div>
                 )}
+
+
+
+
+
+
+
+                {/* Chat UI */}
+                {/* <div className="fixed bottom-6 right-6 z-[9999]"> */}
+                {/* Floating button */}
+                {/* <button
+    onClick={() => setIsOpen((v) => !v)}
+    style={{ background: gradient }}
+    className="rounded-full shadow-xl flex items-center gap-2 px-4 py-2 text-white"
+  >
+    {botIcon ? (
+      <img src={botIcon} alt={botName} className="w-6 h-6 rounded-full" />
+    ) : (
+      <Bot size={22} />
+    )}
+    <span className="text-sm font-semibold">Ask {botName}</span>
+  </button>
+*/}
+                {/* Chat window */}{/* 
+  {isOpen && (
+    <div className="absolute bottom-full mb-3 right-6 w-80 p-0 shadow-2xl rounded-xl transition-all duration-200">
+      <StandardUI
+        apiKey={apiKey}
+        shadowContainer={shadowContainer}
+        botIcon={botIcon || ""}
+        botName={botName}
+        gradient={gradient}
+        darkGradient={darkModeGradient}
+        borderColor={borderColor}
+        darkBorderColor={darkBorderColor}
+        greeting={greeting}
+        introduction={introduction}
+        startButtonText={startButtonText}
+        backgroundColor={backgroundColor}
+      />
+    </div>
+  )} */}
             </div>
+
+            {/* </div> */}
 
 
             {/* </ThemeProvider> */}
