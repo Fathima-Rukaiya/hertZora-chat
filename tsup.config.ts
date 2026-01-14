@@ -1,37 +1,47 @@
-
-// tsup.config.ts
 // import { defineConfig } from "tsup";
 
 // export default defineConfig({
-//   entry: ["src/index.tsx"],    // your main entry
+//   entry: ["src/index.tsx"],
 //   format: ["iife"],            // browser-ready <script>
-//   globalName: "HostieChat",    // exposed as window.HostieChat
+//   globalName: "HertzoraChat",    // exposed as window.HostieChat
 //   outDir: "dist",
 //   bundle: true,
 //   minify: true,
 //   sourcemap: true,
-//   loader: { ".css": "css" },   // converts CSS imports into strings
+//   loader: {
+//   ".css": "text",
+// },
+
 //   define: {
-//     "process.env.NODE_ENV": JSON.stringify("production"), // fixes process error
+//     "process.env.NODE_ENV": JSON.stringify("production"),
 //   },
+//   external: [], // ⚡ Make sure lucide-react, iconsax-react, and react are NOT external
 // });
 
 import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: ["src/index.tsx"],
-  format: ["iife"],            // browser-ready <script>
-  globalName: "HertzoraChat",    // exposed as window.HostieChat
+  format: ["iife"],
+  globalName: "HertzoraChat",
   outDir: "dist",
   bundle: true,
   minify: true,
   sourcemap: true,
+
   loader: {
-  ".css": "text",
-},
+    ".css": "text",
+  },
 
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
   },
-  external: [], // ⚡ Make sure lucide-react, iconsax-react, and react are NOT external
+
+  esbuildOptions(options) {
+    options.platform = "browser";
+    options.define = {
+      ...options.define,
+      "fs": "false",
+    };
+  },
 });
