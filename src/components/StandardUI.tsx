@@ -991,12 +991,7 @@ export function StandardUI({
           -webkit-tap-highlight-color: transparent;
         }
 
-      /*  .quick-review-btn {
-          outline: none !important;
-          box-shadow: none !important;
-          border: 1px solid transparent !important; /* 🚫 no blue */
-          transition: background-color 0.2s ease;
-        }*/
+      
         .quick-review-btn {
           box-shadow: none ;
           transition: background-color 0.2s ease;
