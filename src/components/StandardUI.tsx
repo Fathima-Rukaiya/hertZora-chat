@@ -1331,9 +1331,16 @@ export function StandardUI({
     questions: string[];
     onSelect: (q: string) => void;
   }) => {
+    // const isDark = document
+    //   .querySelector("#hertzora-chat-root")
+    //   ?.classList.contains("dark");
     const isDark = document
       .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
+    const reviewDark = "#404040"
+    const baseBg = isDark ? reviewDark : backgroundColor;
+    const hoverBg = darkenColor(baseBg, 12);
+    const darkBg = "#3f3f46";
 
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -1342,27 +1349,57 @@ export function StandardUI({
         <div className="flex flex-col-reverse gap-2 mt-4 items-end">
           {questions.map((q, i) => {
             const isHovered = hoveredIndex === i;
+            const baseStyle = {
+              borderColor: "1px solid ", suggestQuestionsBorder,
+              // color: emojiData[sentiment].color,
 
+            };
             return (
-              <button
-                key={i}
-                onClick={() => onSelect(q)}
-                onMouseEnter={() => setHoveredIndex(i)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className="p-2 rounded-3xl text-sm max-w-[80%] break-words transition-all duration-200 border"
-                style={{
-                  backgroundColor: isHovered
-                    ? isDark
-                      ? suggestQuestionsDark
-                      : suggestQuestionsBg
-                    : "transparent",
+              <div>    <style>{`
+        button {
+          -webkit-tap-highlight-color: transparent;
+        }
 
-                  borderColor: suggestQuestionsBorder || "#50484cff",
-                  color: isDark ? "#ffffff" : "#1F2937",
-                }}
-              >
-                {q}
-              </button>
+      
+        .quick-review-btn {
+          box-shadow: none ;
+          transition: background-color 0.2s ease;
+        }
+        .quick-review-btn:focus,
+        .quick-review-btn:focus-visible {
+          box-shadow: none !important;
+        }
+
+        /* light hover */
+        .quick-review-btn:hover {
+          background-color: #adacac !important;
+        }
+ .dark.quick-review-btn:hover {
+          background-color: #585858 !important;
+        }   
+      `}</style>
+                <button
+                  key={i}
+                  onClick={() => onSelect(q)}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  className="p-2 rounded-3xl text-sm max-w-[80%] break-words transition-all duration-200 border"
+                  // style={{
+                  //   backgroundColor: isHovered
+                  //     ? isDark
+                  //       ? suggestQuestionsDark
+                  //       : suggestQuestionsBg
+                  //     : "transparent",
+
+                  //   borderColor: suggestQuestionsBorder || "#50484cff",
+                  //   color: isDark ? "#ffffff" : "#1F2937",
+                  // }}
+                  style={baseStyle}
+                >
+                  {q}
+                </button>
+              </div>
+
             );
           })}
         </div>
@@ -1506,12 +1543,6 @@ export function StandardUI({
     if (!guestId) return null;
     setShowDownloadPDF(true);
     setShowSuggestedOnce(false);
-
-    //  const isDark = document
-    //       .querySelector("#hertzora-chat-root")
-    //       ?.classList.contains("dark");
-    //     const reviewDark = "#404040"
-
     const isDark = document
       .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
@@ -1520,9 +1551,6 @@ export function StandardUI({
     const hoverBg = darkenColor(baseBg, 12);
     const darkBg = "#3f3f46";
 
-    const hoverStyle = {
-      backgroundColor: hoverBg,
-    };
     const [hovered, setHovered] = useState<string | null>(null);
 
     const emojiData = {
@@ -1530,8 +1558,6 @@ export function StandardUI({
       neutral: { icon: <Meh size={24} />, text: "Somewhat helpful.", color: "#6b7280" },
       negative: { icon: <Frown size={24} />, text: "Not what I was looking for.", color: "#ef4444" },
     };
-    //const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
-    //const hoverBg = darkenColor(baseBg, 12);
     return (
       <div className="flex flex-col  mt-4 text-center">
         <style>{`
@@ -1578,11 +1604,7 @@ export function StandardUI({
               onMouseEnter={() => setHovered(sentiment)}
               onMouseLeave={() => setHovered(null)}
               className="quick-review-btn flex items-center gap-2 px-4 py-2 rounded-3xl text-sm border transition-colors duration-200  max-w-[95%] mb-1"
-              // style={{
-              //   backgroundColor: isHovered ? hoverBg : baseBg,
-              //   borderColor: suggestQuestionsBorder,
-              //   color: emojiData[sentiment].color,
-              // }}
+
               style={baseStyle} >
               <span className="flex-shrink-0">{emojiData[sentiment].icon}</span>
               <span className="whitespace-nowrap font-medium">{emojiData[sentiment].text}</span>
