@@ -1440,6 +1440,34 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
     const hoverBg = darkenColor(baseBg, 12);
     return (
       <div className="flex flex-col  mt-4 text-center">
+           <style>{`
+        button {
+          -webkit-tap-highlight-color: transparent;
+        }
+
+      
+        .quick-review-btn {
+          box-shadow: none ;
+          transition: background-color 0.2s ease;
+        }
+        .quick-review-btn:focus,
+        .quick-review-btn:focus-visible {
+          box-shadow: none !important;
+        }
+
+        /* light hover */
+        .quick-review-btn:hover {
+          background-color: #adacac !important;
+        }
+ .dark.quick-review-btn:hover {
+          background-color: #585858 !important;
+        }
+
+        
+        
+       
+      `}</style>
+
         {/* Professional Heading */}
         <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
           How was your experience?
@@ -1455,7 +1483,7 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
               onClick={() => onSelect(sentiment)}
               onMouseEnter={() => setHovered(sentiment)}
               onMouseLeave={() => setHovered(null)}
-              className="flex items-center gap-2 px-4 py-2 rounded-3xl text-sm border transition-colors duration-200  max-w-[95%] mb-1"
+              className="quick-review-btn flex items-center gap-2 px-4 py-2 rounded-3xl text-sm border transition-colors duration-200  max-w-[95%] mb-1"
               style={{
                 backgroundColor: isHovered ? hoverBg : baseBg,
                 borderColor: suggestQuestionsBorder,
