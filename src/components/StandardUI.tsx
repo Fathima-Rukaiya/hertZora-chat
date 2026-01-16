@@ -1350,16 +1350,7 @@ export function StandardUI({
           {questions.map((q, i) => {
             const isHovered = hoveredIndex === i;
             const baseStyle = {
-              // borderColor: "1px solid ", suggestQuestionsBorder,
-                 backgroundColor: isHovered
-                      ? isDark
-                        ? suggestQuestionsDark
-                        : suggestQuestionsBg
-                      : "transparent",
-
-                    borderColor: suggestQuestionsBorder || "#50484cff",
-                    color: isDark ? "#ffffff" : "#1F2937",
-
+              borderColor: "1px solid ", suggestQuestionsBorder,
             };
             return (
               <div>    <style>{`
@@ -1390,7 +1381,7 @@ export function StandardUI({
                   onClick={() => onSelect(q)}
                   onMouseEnter={() => setHoveredIndex(i)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className="p-2 rounded-3xl text-sm max-w-[95%] break-words transition-all duration-200 border"
+                  className="quick-review-btn p-2 rounded-3xl text-sm max-w-[95%] break-words transition-all duration-200 border"
                   // style={{
                   //   backgroundColor: isHovered
                   //     ? isDark
