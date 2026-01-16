@@ -1349,35 +1349,36 @@ export function StandardUI({
               borderColor: "1px solid ", suggestQuestionsBorder,
             };
             return (
-              <div>    <style>{`
-        button {
-          -webkit-tap-highlight-color: transparent;
-        }
+              <>
+                <style>{`
+                    button {
+                      -webkit-tap-highlight-color: transparent;
+                    }
 
       
-        .quick-review-btn {
-          box-shadow: none ;
-          transition: background-color 0.2s ease;
-        }
-        .quick-review-btn:focus,
-        .quick-review-btn:focus-visible {
-          box-shadow: none !important;
-        }
+                    .quick-review-btn {
+                      box-shadow: none ;
+                      transition: background-color 0.2s ease;
+                    }
+                    .quick-review-btn:focus,
+                  .quick-review-btn:focus-visible {
+                    box-shadow: none !important;
+                  }
 
-        /* light hover */
-        .quick-review-btn:hover {
-          background-color: #adacac !important;
-        }
- .dark.quick-review-btn:hover {
-          background-color: #585858 !important;
-        }   
+                  /* light hover */
+                  .quick-review-btn:hover {
+                    background-color: #adacac !important;
+                  }
+          .dark.quick-review-btn:hover {
+                    background-color: #585858 !important;
+                  }   
       `}</style>
                 <button
                   key={i}
                   onClick={() => onSelect(q)}
                   onMouseEnter={() => setHoveredIndex(i)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className="quick-review-btn p-2 rounded-3xl text-sm max-w-[99%] whitespace-normal  transition-all duration-200 border"
+                  className="quick-review-btn p-2 rounded-3xl text-sm max-w-[99%] break-words transition-all duration-200 border"
                   // style={{
                   //   backgroundColor: isHovered
                   //     ? isDark
@@ -1392,7 +1393,7 @@ export function StandardUI({
                 >
                   {q}
                 </button>
-              </div>
+              </>
 
             );
           })}
