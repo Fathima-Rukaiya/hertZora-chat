@@ -1337,10 +1337,6 @@ export function StandardUI({
     const isDark = document
       .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
-    const reviewDark = "#404040"
-    const baseBg = isDark ? reviewDark : backgroundColor;
-    const hoverBg = darkenColor(baseBg, 12);
-    const darkBg = "#3f3f46";
 
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -1381,7 +1377,7 @@ export function StandardUI({
                   onClick={() => onSelect(q)}
                   onMouseEnter={() => setHoveredIndex(i)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className="quick-review-btn p-2 rounded-3xl text-sm max-w-[95%] break-words transition-all duration-200 border"
+                  className="quick-review-btn p-2 rounded-3xl text-sm max-w-[99%] break-words transition-all duration-200 border"
                   // style={{
                   //   backgroundColor: isHovered
                   //     ? isDark
