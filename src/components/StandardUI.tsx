@@ -44,6 +44,8 @@ export function StandardUI({
   position,
   welcomeMsg,
   suggestedQuestionList,
+  showHertzoraBranding,
+
 }: {
   apiKey: string;
   shadowContainer?: React.RefObject<HTMLDivElement | null>;
@@ -62,6 +64,7 @@ export function StandardUI({
   position?: "left" | "right";
   welcomeMsg?: string;
   suggestedQuestionList?: string[];
+  showHertzoraBranding: boolean;
 }) {
 
   const [message, setMessage] = useState("");
@@ -2326,6 +2329,7 @@ export function StandardUI({
           <div className="font-medium text-center border-b border-zinc-200 dark:border-neutral-700 pb-3 text-xs text-zinc-400 dark:text-zinc-400">
             {botName} may produce inaccurate information
           </div>
+          {showHertzoraBranding && (
           <div className="flex items-center pt-2 justify-center font-medium text-center pb-3 text-sm text-zinc-400 dark:text-zinc-400">
             Powered by{" "}
 
@@ -2366,6 +2370,7 @@ export function StandardUI({
               </div>
             </div>
           </div>
+          )}
         </div>
       </div>
     </>

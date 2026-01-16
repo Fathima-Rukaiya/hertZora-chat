@@ -31,6 +31,8 @@ export function ChatUI({ apiKey,
     const [linkBehavior, setLinkBehavior] = useState<"newTab" | "sameTab">("newTab");
 
     const [welcomeMsg, SetWelcomeMsg] = useState<string>("");
+    const [showHertzoraBranding, setShowHertzoraBranding] = useState(true);
+
 
     const [suggestedQuestions, setSuggestedQuestions] = useState<string[] | null>(null);
     const [errorMessage, setErrorMessage] = useState("");
@@ -88,6 +90,8 @@ export function ChatUI({ apiKey,
                     setSuggestedQuestions(data.suggestedQuestions || null);
                     setCustomWidgetIcon(data.customWidgetIcon || null);
                     setButtonSize(data.buttonSize || null);
+
+                    setShowHertzoraBranding(data.showHertzoraBranding ?? false);
 
                 } else {
 
@@ -223,7 +227,7 @@ export function ChatUI({ apiKey,
                         ) : (
                             <Bot strokeWidth={1.75} size={22} />
                         )}
-                        <span className="font-semibold text-sm">Ask {botName}oioio     </span>
+                        <span className="font-semibold text-sm">Ask {botName}0011    </span>
                     </button>
                 )}
 
@@ -242,6 +246,7 @@ export function ChatUI({ apiKey,
                             position={buttonPosition}
                             welcomeMsg={welcomeMsg}
                             suggestedQuestionList={suggestedQuestions || undefined}
+                            showHertzoraBranding={showHertzoraBranding}
                         />
                     </div>
                 )}
