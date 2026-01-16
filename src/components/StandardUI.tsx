@@ -1416,165 +1416,89 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
     negative: "Not what I was looking for.",
   };
 
-//   const QuickEmojiReview = ({
-//     onSelect,
-//   }: {
-//     onSelect: (sentiment: "positive" | "neutral" | "negative") => void;
-//   }) => {
-//     if (!guestId) return null;
-//     setShowDownloadPDF(true);
-//     setShowSuggestedOnce(false);
+  const QuickEmojiReview = ({
+    onSelect,
+  }: {
+    onSelect: (sentiment: "positive" | "neutral" | "negative") => void;
+  }) => {
+    if (!guestId) return null;
+    setShowDownloadPDF(true);
+    setShowSuggestedOnce(false);
 
-//     const isDark = document
-//       .querySelector("#hertzora-chat-root")
-//       ?.classList.contains("dark");
+    const isDark = document
+      .querySelector("#hertzora-chat-root")
+      ?.classList.contains("dark");
 
-//     const [hovered, setHovered] = useState<string | null>(null);
+    const [hovered, setHovered] = useState<string | null>(null);
 
-//     const emojiData = {
-//       positive: { icon: <Laugh size={24} />, text: "That was helpful, thank you!", color: "#22c55e" },
-//       neutral: { icon: <Meh size={24} />, text: "Somewhat helpful.", color: "#6b7280" },
-//       negative: { icon: <Frown size={24} />, text: "Not what I was looking for.", color: "#ef4444" },
-//     };
-//     const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
-//     const hoverBg = darkenColor(baseBg, 12);
-//     return (
-//       <div className="flex flex-col  mt-4 text-center">
-//            <style>{`
-//         button {
-//           -webkit-tap-highlight-color: transparent;
-//         }
-
-      
-//         .quick-review-btn {
-//           box-shadow: none ;
-//           transition: background-color 0.2s ease;
-//         }
-//         .quick-review-btn:focus,
-//         .quick-review-btn:focus-visible {
-//           box-shadow: none !important;
-//         }
-
-//         /* light hover */
-//         .quick-review-btn:hover {
-//           background-color: #adacac !important;
-//         }
-//  .dark.quick-review-btn:hover {
-//           background-color: #585858 !important;
-//         }
-
-        
-        
-       
-//       `}</style>
-
-//         {/* Professional Heading */}
-//         <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
-//           How was your experience?
-//         </p>
-//         {/* Emoji Buttons */}
-
-//         {(Object.keys(emojiData) as ("positive" | "neutral" | "negative")[]).map((sentiment) => {
-//           const isHovered = hovered === sentiment;
-
-//           return (
-//             <button
-//               key={sentiment}
-//               onClick={() => onSelect(sentiment)}
-//               onMouseEnter={() => setHovered(sentiment)}
-//               onMouseLeave={() => setHovered(null)}
-//               className="quick-review-btn flex items-center gap-2 px-4 py-2 rounded-3xl text-sm border transition-colors duration-200  max-w-[95%] mb-1"
-//               style={{
-//                 backgroundColor: isHovered ? hoverBg : baseBg,
-//                 borderColor: suggestQuestionsBorder,
-//                 color: emojiData[sentiment].color,
-//               }} >
-//               <span className="flex-shrink-0">{emojiData[sentiment].icon}</span>
-//               <span className="whitespace-nowrap font-medium">{emojiData[sentiment].text}</span>
-//             </button>
-//           );
-//         })}
-//       </div>
-//     );
-//   };
-
-const QuickEmojiReview = ({
-  onSelect,
-}: {
-  onSelect: (sentiment: "positive" | "neutral" | "negative") => void;
-}) => {
-  if (!guestId) return null;
-
-  const isDark = document
-    .querySelector("#hertzora-chat-root")
-    ?.classList.contains("dark");
-
-  const [hovered, setHovered] = useState<string | null>(null);
-
-  const emojiData = {
-    positive: { icon: <Laugh size={24} />, text: "That was helpful, thank you!", color: "#22c55e" },
-    neutral: { icon: <Meh size={24} />, text: "Somewhat helpful.", color: "#6b7280" },
-    negative: { icon: <Frown size={24} />, text: "Not what I was looking for.", color: "#ef4444" },
-  };
-
-  /* SAME COLORS AS QUICK REVIEW */
-  const baseBg = isDark ? "#3f3f46" : backgroundColor;
-  const hoverBg = isDark ? "#585858" : "#adacac";
-
-  return (
-    <div className="flex flex-col mt-4 text-center">
-      <style>{`
+    const emojiData = {
+      positive: { icon: <Laugh size={24} />, text: "That was helpful, thank you!", color: "#22c55e" },
+      neutral: { icon: <Meh size={24} />, text: "Somewhat helpful.", color: "#6b7280" },
+      negative: { icon: <Frown size={24} />, text: "Not what I was looking for.", color: "#ef4444" },
+    };
+    const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+    const hoverBg = darkenColor(baseBg, 12);
+    return (
+      <div className="flex flex-col  mt-4 text-center">
+           <style>{`
         button {
           -webkit-tap-highlight-color: transparent;
         }
 
+      
         .quick-review-btn {
-          background-color: ${baseBg};
-          border: 1px solid ${suggestQuestionsBorder};
-          box-shadow: none !important;
-          outline: none !important;
+          box-shadow: none ;
           transition: background-color 0.2s ease;
         }
-
         .quick-review-btn:focus,
-        .quick-review-btn:focus-visible,
-        .quick-review-btn:active {
-          outline: none !important;
+        .quick-review-btn:focus-visible {
           box-shadow: none !important;
-          border-color: ${suggestQuestionsBorder} !important;
         }
 
+        /* light hover */
         .quick-review-btn:hover {
-          background-color: ${hoverBg} !important;
+          background-color: #adacac !important;
         }
+ .dark.quick-review-btn:hover {
+          background-color: #585858 !important;
+        }
+
+        
+        
+       
       `}</style>
 
-      <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
-        How was your experience?
-      </p>
+        {/* Professional Heading */}
+        <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
+          How was your experience?
+        </p>
+        {/* Emoji Buttons */}
 
-      {(Object.keys(emojiData) as ("positive" | "neutral" | "negative")[]).map(
-        (sentiment) => (
-          <button
-            key={sentiment}
-            onClick={() => onSelect(sentiment)}
-            className="quick-review-btn flex items-center gap-2 px-4 py-2 rounded-3xl text-sm max-w-[95%] mb-1"
-            style={{
-              color: emojiData[sentiment].color,
-            }}
-          >
-            <span className="flex-shrink-0">
-              {emojiData[sentiment].icon}
-            </span>
-            <span className="whitespace-nowrap font-medium">
-              {emojiData[sentiment].text}
-            </span>
-          </button>
-        )
-      )}
-    </div>
-  );
-};
+        {(Object.keys(emojiData) as ("positive" | "neutral" | "negative")[]).map((sentiment) => {
+          const isHovered = hovered === sentiment;
+
+          return (
+            <button
+              key={sentiment}
+              onClick={() => onSelect(sentiment)}
+              onMouseEnter={() => setHovered(sentiment)}
+              onMouseLeave={() => setHovered(null)}
+              className="quick-review-btn flex items-center gap-2 px-4 py-2 rounded-3xl text-sm border transition-colors duration-200  max-w-[95%] mb-1"
+              style={{
+                backgroundColor: isHovered ? hoverBg : baseBg,
+                borderColor: suggestQuestionsBorder,
+                color: emojiData[sentiment].color,
+              }} >
+              <span className="flex-shrink-0">{emojiData[sentiment].icon}</span>
+              <span className="whitespace-nowrap font-medium">{emojiData[sentiment].text}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
+
+
 
   const saveQuickAssigneeReview = async (
     sentiment: "positive" | "neutral" | "negative"
