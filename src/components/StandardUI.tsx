@@ -1416,7 +1416,89 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
     negative: "Not what I was looking for.",
   };
 
-  const QuickEmojiReview = ({
+//   const QuickEmojiReview = ({
+//     onSelect,
+//   }: {
+//     onSelect: (sentiment: "positive" | "neutral" | "negative") => void;
+//   }) => {
+//     if (!guestId) return null;
+//     setShowDownloadPDF(true);
+//     setShowSuggestedOnce(false);
+
+//     const isDark = document
+//       .querySelector("#hertzora-chat-root")
+//       ?.classList.contains("dark");
+
+//     const [hovered, setHovered] = useState<string | null>(null);
+
+//     const emojiData = {
+//       positive: { icon: <Laugh size={24} />, text: "That was helpful, thank you!", color: "#22c55e" },
+//       neutral: { icon: <Meh size={24} />, text: "Somewhat helpful.", color: "#6b7280" },
+//       negative: { icon: <Frown size={24} />, text: "Not what I was looking for.", color: "#ef4444" },
+//     };
+//     const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+//     const hoverBg = darkenColor(baseBg, 12);
+//     return (
+//       <div className="flex flex-col  mt-4 text-center">
+//            <style>{`
+//         button {
+//           -webkit-tap-highlight-color: transparent;
+//         }
+
+      
+//         .quick-review-btn {
+//           box-shadow: none ;
+//           transition: background-color 0.2s ease;
+//         }
+//         .quick-review-btn:focus,
+//         .quick-review-btn:focus-visible {
+//           box-shadow: none !important;
+//         }
+
+//         /* light hover */
+//         .quick-review-btn:hover {
+//           background-color: #adacac !important;
+//         }
+//  .dark.quick-review-btn:hover {
+//           background-color: #585858 !important;
+//         }
+
+        
+        
+       
+//       `}</style>
+
+//         {/* Professional Heading */}
+//         <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
+//           How was your experience?
+//         </p>
+//         {/* Emoji Buttons */}
+
+//         {(Object.keys(emojiData) as ("positive" | "neutral" | "negative")[]).map((sentiment) => {
+//           const isHovered = hovered === sentiment;
+
+//           return (
+//             <button
+//               key={sentiment}
+//               onClick={() => onSelect(sentiment)}
+//               onMouseEnter={() => setHovered(sentiment)}
+//               onMouseLeave={() => setHovered(null)}
+//               className="quick-review-btn flex items-center gap-2 px-4 py-2 rounded-3xl text-sm border transition-colors duration-200  max-w-[95%] mb-1"
+//               style={{
+//                 backgroundColor: isHovered ? hoverBg : baseBg,
+//                 borderColor: suggestQuestionsBorder,
+//                 color: emojiData[sentiment].color,
+//               }} >
+//               <span className="flex-shrink-0">{emojiData[sentiment].icon}</span>
+//               <span className="whitespace-nowrap font-medium">{emojiData[sentiment].text}</span>
+//             </button>
+//           );
+//         })}
+//       </div>
+//     );
+//   };
+
+ const QuickEmojiReview = ({
     onSelect,
   }: {
     onSelect: (sentiment: "positive" | "neutral" | "negative") => void;
@@ -1425,9 +1507,44 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
     setShowDownloadPDF(true);
     setShowSuggestedOnce(false);
 
-    const isDark = document
+    // const isDark = document
+    //   .querySelector("#hertzora-chat-root")
+    //   ?.classList.contains("dark");
+    
+ const isDark = document
       .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
+    const reviewDark = "#404040"
+    //const baseBg = isDark ? reviewDark : backgroundColor;
+   // const hoverBg = darkenColor(baseBg, 12);
+    const darkBg = "#3f3f46";
+    const baseStyle = {
+      // backgroundColor: !isDark ? baseBg : darkBg,
+      borderColor: "1px solid ", suggestQuestionsBorder,
+      // color: isDark ? "#ffffff" : "#333",
+      // transition: "background-color 0.3s ease",
+    };
+
+    //     const baseStyle: React.CSSProperties = {
+    //   backgroundColor: isDark ? darkBg : baseBg,
+    //   border: `1px solid ${suggestQuestionsBorder}`,
+    //   color: isDark ? "#ffffff" : "#333333",
+    //   transition: "background-color 0.2s ease",
+    // };
+
+    //  const baseStyleDark = {
+    //       backgroundColor: "#3f3f46 !important",
+    //       borderColor: "1px solid  #2a2a33",
+    //       color: isDark ? "#ffffff" : "#333",
+    //       transition: "background-color 0.3s",
+
+
+    //     };
+
+    // const hoverStyle = {
+    //   backgroundColor: hoverBg,
+    // };
+
 
     const [hovered, setHovered] = useState<string | null>(null);
 
@@ -1461,11 +1578,7 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
         }
  .dark.quick-review-btn:hover {
           background-color: #585858 !important;
-        }
-
-        
-        
-       
+        }   
       `}</style>
 
         {/* Professional Heading */}
@@ -1497,7 +1610,6 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
       </div>
     );
   };
-
 
 
   const saveQuickAssigneeReview = async (
