@@ -83,7 +83,7 @@ export function ChatUI({ apiKey,
                     setBackgroundColor(data.backgroundColor || "#ffffff")
                     //  setChatTriggerType(data.chat_trigger || "bubble");
 
-                    setButtonPosition(data.buttonPosition || "rigth");
+                    setButtonPosition(data.buttonPosition || "right");
                     setAllowFileUpload(data.allowFileUpload ?? true);
                     setLinkBehavior(data.linkBehavior || "newTab");
                     SetWelcomeMsg(data.welcomeMessage);
@@ -91,7 +91,7 @@ export function ChatUI({ apiKey,
                     setCustomWidgetIcon(data.customWidgetIcon || null);
                     setButtonSize(data.buttonSize || null);
 
-                    setShowHertzoraBranding(data.showHertzoraBranding ?? false);
+                    setShowHertzoraBranding(data.showHertzoraBranding ?? true);
 
                 } else {
 
@@ -227,7 +227,7 @@ export function ChatUI({ apiKey,
                         ) : (
                             <Bot strokeWidth={1.75} size={22} />
                         )}
-                        <span className="font-semibold text-sm">Ask {botName}0011    </span>
+                        <span className="font-semibold text-sm">Ask {botName}99   </span>
                     </button>
                 )}
 

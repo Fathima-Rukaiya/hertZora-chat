@@ -78,7 +78,7 @@ export function StandardUI({
   const [aiTyping, setAiTyping] = useState(false);
 
   const [aiPaused, setAiPaused] = useState(() => {
-    const saved = sessionStorage.getItem("aiPaused");
+    const saved = localStorage.getItem("aiPaused");
     return saved === "true"; // restore previous state
   });
 
@@ -375,8 +375,8 @@ export function StandardUI({
     }
 
     // remove session
-    sessionStorage.removeItem("guestContactId");
-    sessionStorage.removeItem("room");
+    localStorage.removeItem("guestContactId");
+    localStorage.removeItem("room");
     setShowDownloadPDF(false);
     setShowEndPopup(false);
     setChatHistory([]);
@@ -388,7 +388,7 @@ export function StandardUI({
     setAskedForInfo(false);
     // reset AI pause state
     setAiPaused(false);
-    sessionStorage.removeItem("aiPaused");
+    localStorage.removeItem("aiPaused");
     setShowSuggestedOnce(false);
     setShowQuickAssigneeReview(false);
     setShowQuickReview(false)
@@ -397,7 +397,7 @@ export function StandardUI({
     const newRoom = crypto.randomUUID();
     setRoomName(newRoom);
 
-    sessionStorage.setItem("room", newRoom);
+    localStorage.setItem("room", newRoom);
 
     setIsGuest(true);
 
@@ -420,8 +420,8 @@ export function StandardUI({
 
 
     // remove session
-    sessionStorage.removeItem("guestContactId");
-    sessionStorage.removeItem("room");
+    localStorage.removeItem("guestContactId");
+    localStorage.removeItem("room");
 
     setShowEndPopup(false);
     setChatHistory([]);
@@ -433,7 +433,7 @@ export function StandardUI({
     setAskedForInfo(false);
     // reset AI pause state
     setAiPaused(false);
-    sessionStorage.removeItem("aiPaused");
+    localStorage.removeItem("aiPaused");
     setShowSuggestedOnce(false);
     setShowQuickAssigneeReview(false);
     setShowDownloadPDF(false);
@@ -441,7 +441,7 @@ export function StandardUI({
     const newRoom = crypto.randomUUID();
     setRoomName(newRoom);
 
-    sessionStorage.setItem("room", newRoom);
+    localStorage.setItem("room", newRoom);
 
     setIsGuest(true);
     setShowQuickReview(false)
@@ -456,7 +456,7 @@ export function StandardUI({
 
 
   useEffect(() => {
-    sessionStorage.setItem("aiPaused", aiPaused.toString());
+    localStorage.setItem("aiPaused", aiPaused.toString());
   }, [aiPaused]);
 
   const [shadowReady, setShadowReady] = useState(false);
@@ -498,11 +498,11 @@ export function StandardUI({
   useEffect(() => {
     const setupRoom = async () => {
       try {
-        const guestContactId = sessionStorage.getItem("guestContactId");
+        const guestContactId = localStorage.getItem("guestContactId");
         // resetInactivityTimer();
 
-        const savedRoom = sessionStorage.getItem("room");
-        const savedGuestId = sessionStorage.getItem("guestContactId");
+        const savedRoom = localStorage.getItem("room");
+        const savedGuestId = localStorage.getItem("guestContactId");
 
         //  console.log("storage data room :", savedRoom, " guestID ", savedGuestId)
         if (guestContactId) {
@@ -540,7 +540,7 @@ export function StandardUI({
           setAskedForInfo(false);
           // reset AI pause state
           setAiPaused(false);
-          sessionStorage.removeItem("aiPaused");
+          localStorage.removeItem("aiPaused");
 
 
 
@@ -646,7 +646,7 @@ export function StandardUI({
         // 2 System: Resume AI
         if (msgText === "AI responses resumed.") {
           setAiPaused(false);
-          addBotMessage(msgText);
+          addBotMessage("Thank you for chatting with us! 💬\nWe hope all your questions were answered. Have a great day!");
           setAssignedAgent(null);
           setShowQuickReview(false);
           setShowQuickAssigneeReview(true);
@@ -831,125 +831,6 @@ export function StandardUI({
     ]);
   };
 
-  // const QuickReview = ({ onPositive, onNegative }: {
-  //   onPositive: () => void;
-  //   onNegative: () => void;
-  // }) => {
-  //   const isDark = document
-  //     .querySelector("#hertzora-chat-root")
-  //     ?.classList.contains("dark");
-
-  //   const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
-  //   const hoverBg = darkenColor(baseBg, 12);
-
-  //   const baseStyle = {
-  //     backgroundColor: baseBg,
-  //     borderColor: suggestQuestionsBorder,
-  //     color: "#333",
-  //   };
-
-  //   const hoverStyle = {
-  //     backgroundColor: hoverBg,
-  //   };
-
-  //   return (
-  //     <div className="flex flex-col items-end gap-2 mt-3">
-  //       <style>{`
-  //             button {
-  //               -webkit-tap-highlight-color: transparent;
-  //             }
-
-  //             button:focus,
-  //             button:focus-visible {
-  //               outline: none !important;
-  //               box-shadow: none !important;
-  //             }
-
-  //             /* remove blue focus / border */
-  //             .quick-review-btn {
-  //               outline: none;
-  //               box-shadow: none;
-  //               border-color: var(--qr-border, #747071);
-  //               transition: background-color 0.2s ease, border-color 0.2s ease;
-  //             }
-
-  //             .quick-review-btn:focus,
-  //             .quick-review-btn:focus-visible {
-  //               outline: none;
-  //               box-shadow: none;
-  //               border-color: var(--qr-border, #747071);
-  //             }
-
-  //             /* light mode hover */
-  //             .quick-review-btn:hover {
-  //               background-color: #d4d4d4 !important; /* ash */
-  //             }
-
-  //             /* dark mode hover */
-  //             .dark .quick-review-btn:hover {
-  //               background-color: #3f3f46 !important; /* dark ash */
-  //             }
-  //       `}</style>
-  //       {/* <button
-  //         onClick={onPositive}
-  //         className="quick-review-btn p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
-  //         style={baseStyle}
-  //         onMouseEnter={(e) =>
-  //           (e.currentTarget.style.backgroundColor = hoverBg)
-  //         }
-  //         onMouseLeave={(e) =>
-  //           (e.currentTarget.style.backgroundColor = baseBg)
-  //         }
-  //       >
-  //         😊 Thank you, that helped
-  //       </button>
-
-  //       <button
-  //         onClick={onNegative}
-  //         className="quick-review-btn p-2 rounded-3xl text-sm border transition-colors max-w-[80%]"
-  //         style={baseStyle}
-  //         onMouseEnter={(e) =>
-  //           (e.currentTarget.style.backgroundColor = hoverBg)
-  //         }
-  //         onMouseLeave={(e) =>
-  //           (e.currentTarget.style.backgroundColor = baseBg)
-  //         }
-  //       >
-  //         ❓No I have more question
-  //       </button> */}
-
-
-  //       <button
-  //         onClick={onPositive}
-  //         className="quick-review-btn p-2 rounded-3xl text-sm border max-w-[80%]"
-  //         style={{
-  //           backgroundColor: isDark ? suggestQuestionsDark : backgroundColor,
-  //           borderColor: suggestQuestionsBorder,
-  //           color: "#22c55e", // green
-  //           ["--qr-border" as any]: suggestQuestionsBorder,
-  //         }}
-  //       >
-  //         😊 Thank you, that helped
-  //       </button>
-
-  //       <button
-  //         onClick={onNegative}
-  //         className="quick-review-btn p-2 rounded-3xl text-sm border max-w-[80%]"
-  //         style={{
-  //           backgroundColor: isDark ? suggestQuestionsDark : backgroundColor,
-  //           borderColor: suggestQuestionsBorder,
-  //           color: "#6b7280", // ash/gray
-  //           ["--qr-border" as any]: suggestQuestionsBorder,
-  //         }}
-  //       >
-  //         ❓ No I have more questions
-  //       </button>
-
-  //     </div>
-  //   );
-  // };
-
-
   const QuickReview = ({ onPositive, onNegative }: {
     onPositive: () => void;
     onNegative: () => void;
@@ -1085,14 +966,14 @@ export function StandardUI({
           : { name: message, room_id: roomName, country: country, };
         try {
           const savedGuest = await saveGuestContact(guestData);
-          sessionStorage.setItem("guestContactId", savedGuest.id);
+          localStorage.setItem("guestContactId", savedGuest.id);
           setGuestId(savedGuest.id);
           setSenderId(savedGuest.id);
           setUserInfo({ name: savedGuest.name, email: savedGuest.email });
 
-          sessionStorage.setItem("room", savedGuest.room_id);
+          localStorage.setItem("room", savedGuest.room_id);
           setRoomName(savedGuest.room_id);
-          sessionStorage.setItem("guestContactId", savedGuest.id)
+          localStorage.setItem("guestContactId", savedGuest.id)
 
           //  await saveUserMessage(message, true);
           await saveUserMessageWithSender(messageText, true, savedGuest.id);
@@ -1236,8 +1117,8 @@ export function StandardUI({
   const shadowRoot = document.querySelector("#hertzora-chat-root")?.shadowRoot;
 
   const handleReviewSubmit = async () => {
-    const contactId = sessionStorage.getItem("guestContactId");
-    const room = sessionStorage.getItem("room");
+    const contactId = localStorage.getItem("guestContactId");
+    const room = localStorage.getItem("room");
 
     if (!contactId || !room) {
       setShowReviewPopup(false);
@@ -2326,11 +2207,11 @@ export function StandardUI({
 
             </div>)}
 
-          <div className="font-medium text-center border-b border-zinc-200 dark:border-neutral-700 pb-3 text-xs text-zinc-400 dark:text-zinc-400">
+          <div className="font-medium text-center  dark:border-neutral-700 pb-3 text-xs text-zinc-400 dark:text-zinc-400">
             {botName} may produce inaccurate information
           </div>
           {showHertzoraBranding && (
-          <div className="flex items-center pt-2 justify-center font-medium text-center pb-3 text-sm text-zinc-400 dark:text-zinc-400">
+          <div className="flex items-center pt-2 border-t border-zinc-200 justify-center font-medium text-center pb-3 text-sm text-zinc-400 dark:text-zinc-400">
             Powered by{" "}
 
             <div className="relative group inline-block">
