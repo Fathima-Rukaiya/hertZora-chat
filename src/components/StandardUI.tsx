@@ -1520,33 +1520,12 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
     const hoverBg = darkenColor(baseBg, 12);
     const darkBg = "#3f3f46";
     const baseStyle = {
-      // backgroundColor: !isDark ? baseBg : darkBg,
       borderColor: "1px solid ", suggestQuestionsBorder,
-      // color: isDark ? "#ffffff" : "#333",
-      // transition: "background-color 0.3s ease",
+   
     };
-
-    //     const baseStyle: React.CSSProperties = {
-    //   backgroundColor: isDark ? darkBg : baseBg,
-    //   border: `1px solid ${suggestQuestionsBorder}`,
-    //   color: isDark ? "#ffffff" : "#333333",
-    //   transition: "background-color 0.2s ease",
-    // };
-
-    //  const baseStyleDark = {
-    //       backgroundColor: "#3f3f46 !important",
-    //       borderColor: "1px solid  #2a2a33",
-    //       color: isDark ? "#ffffff" : "#333",
-    //       transition: "background-color 0.3s",
-
-
-    //     };
-
     const hoverStyle = {
       backgroundColor: hoverBg,
     };
-
-
     const [hovered, setHovered] = useState<string | null>(null);
 
     const emojiData = {
@@ -1598,11 +1577,12 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
               onMouseEnter={() => setHovered(sentiment)}
               onMouseLeave={() => setHovered(null)}
               className="quick-review-btn flex items-center gap-2 px-4 py-2 rounded-3xl text-sm border transition-colors duration-200  max-w-[95%] mb-1"
-              style={{
-                backgroundColor: isHovered ? hoverBg : baseBg,
-                borderColor: suggestQuestionsBorder,
-                color: emojiData[sentiment].color,
-              }} >
+              // style={{
+              //   backgroundColor: isHovered ? hoverBg : baseBg,
+              //   borderColor: suggestQuestionsBorder,
+              //   color: emojiData[sentiment].color,
+              // }}
+               style={baseStyle} >
               <span className="flex-shrink-0">{emojiData[sentiment].icon}</span>
               <span className="whitespace-nowrap font-medium">{emojiData[sentiment].text}</span>
             </button>
