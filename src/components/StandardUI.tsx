@@ -1350,8 +1350,15 @@ export function StandardUI({
           {questions.map((q, i) => {
             const isHovered = hoveredIndex === i;
             const baseStyle = {
-              borderColor: "1px solid ", suggestQuestionsBorder,
-              // color: emojiData[sentiment].color,
+              // borderColor: "1px solid ", suggestQuestionsBorder,
+                 backgroundColor: isHovered
+                      ? isDark
+                        ? suggestQuestionsDark
+                        : suggestQuestionsBg
+                      : "transparent",
+
+                    borderColor: suggestQuestionsBorder || "#50484cff",
+                    color: isDark ? "#ffffff" : "#1F2937",
 
             };
             return (
@@ -1383,7 +1390,7 @@ export function StandardUI({
                   onClick={() => onSelect(q)}
                   onMouseEnter={() => setHoveredIndex(i)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className="p-2 rounded-3xl text-sm max-w-[80%] break-words transition-all duration-200 border"
+                  className="p-2 rounded-3xl text-sm max-w-[95%] break-words transition-all duration-200 border"
                   // style={{
                   //   backgroundColor: isHovered
                   //     ? isDark
