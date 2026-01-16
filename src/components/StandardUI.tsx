@@ -1002,11 +1002,14 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
           box-shadow: none !important;
         }
 
-        /* light hover 
+        /* light hover */
         .quick-review-btn:hover {
-          background-color: #d4d4d4 !important;
+          background-color: #adacac !important;
         }
-*/
+ .dark.quick-review-btn:hover {
+          background-color: #585858 !important;
+        }
+
         
         
        
