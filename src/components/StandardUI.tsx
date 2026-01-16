@@ -1377,7 +1377,7 @@ export function StandardUI({
                   onClick={() => onSelect(q)}
                   onMouseEnter={() => setHoveredIndex(i)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className="quick-review-btn p-2 rounded-3xl text-sm max-w-[99%] break-words transition-all duration-200 border"
+                  className="quick-review-btn p-2 rounded-3xl text-sm max-w-[99%] whitespace-normal  transition-all duration-200 border"
                   // style={{
                   //   backgroundColor: isHovered
                   //     ? isDark
