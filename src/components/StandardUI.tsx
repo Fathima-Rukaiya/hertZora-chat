@@ -1506,17 +1506,18 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
     if (!guestId) return null;
     setShowDownloadPDF(true);
     setShowSuggestedOnce(false);
-
-    // const isDark = document
-    //   .querySelector("#hertzora-chat-root")
-    //   ?.classList.contains("dark");
     
- const isDark = document
+//  const isDark = document
+//       .querySelector("#hertzora-chat-root")
+//       ?.classList.contains("dark");
+//     const reviewDark = "#404040"
+  
+    const isDark = document
       .querySelector("#hertzora-chat-root")
       ?.classList.contains("dark");
     const reviewDark = "#404040"
-    //const baseBg = isDark ? reviewDark : backgroundColor;
-   // const hoverBg = darkenColor(baseBg, 12);
+    const baseBg = isDark ? reviewDark : backgroundColor;
+    const hoverBg = darkenColor(baseBg, 12);
     const darkBg = "#3f3f46";
     const baseStyle = {
       // backgroundColor: !isDark ? baseBg : darkBg,
@@ -1541,9 +1542,9 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     //     };
 
-    // const hoverStyle = {
-    //   backgroundColor: hoverBg,
-    // };
+    const hoverStyle = {
+      backgroundColor: hoverBg,
+    };
 
 
     const [hovered, setHovered] = useState<string | null>(null);
@@ -1553,8 +1554,8 @@ const textareaRef = useRef<HTMLTextAreaElement>(null);
       neutral: { icon: <Meh size={24} />, text: "Somewhat helpful.", color: "#6b7280" },
       negative: { icon: <Frown size={24} />, text: "Not what I was looking for.", color: "#ef4444" },
     };
-    const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
-    const hoverBg = darkenColor(baseBg, 12);
+    //const baseBg = isDark ? suggestQuestionsDark : backgroundColor;
+    //const hoverBg = darkenColor(baseBg, 12);
     return (
       <div className="flex flex-col  mt-4 text-center">
            <style>{`
